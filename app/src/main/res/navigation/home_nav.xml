@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/home_nav"
+    app:startDestination="@id/liveFragment">
+
+    <fragment
+        android:id="@+id/liveFragment"
+        android:name="com.yb.livechatkt.ui.fragment.LiveFragment"
+        android:label="LiveFragment" />
+    <fragment
+        android:id="@+id/mineFragment"
+        android:name="com.yb.livechatkt.ui.fragment.MineFragment"
+        android:label="MineFragment" />
+    <fragment
+        android:id="@+id/sessionFragment"
+        android:name="com.yb.livechatkt.ui.fragment.SessionFragment"
+        android:label="SessionFragment" />
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="com.yb.livechatkt.ui.fragment.ContactsFragment"
+        android:label="ContactsFragment" />
+</navigation>

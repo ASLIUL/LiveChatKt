@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LiveTitleBar">
+        <attr name="leftType" format="integer"/>
+        <attr name="leftTitle" format="string"/>
+        <attr name="leftImg" format="reference"/>
+        <attr name="centerTitle" format="string"/>
+        <attr name="centerType" format="integer"/>
+        <attr name="rightTitle" format="string"/>
+        <attr name="rightImg" format="reference"/>
+        <attr name="rightType" format="integer"/>
+        <attr name="textColor" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="LiveIconTitleActionBar">
+        <attr name="icon" format="reference"/>
+        <attr name="title" format="string"/>
+        <attr name="dic" format="reference"/>
+    </declare-styleable>
+</resources>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:id="@+id/bottom_home_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/limit_size_40dp"
+        android:layout_margin="@dimen/limit_size_10dp"
+
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/bottom_home_1"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/limit_size_50dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteY="5dp">
+
+            <ImageView
+                android:id="@+id/bottom_home_1_img"
+                android:layout_width="@dimen/limit_size_17dp"
+                android:layout_height="@dimen/limit_size_17dp"
+                android:contentDescription="@string/todo"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_home_black"
+                app:srcCompat="@drawable/ic_home_black" />
+
+            <TextView
+                android:id="@+id/bottom_home_1_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_bottom_text_1"
+                android:textSize="@dimen/font_size_10sp" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/bottom_home_2"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/limit_size_60dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/unread_num"
+                android:layout_width="@dimen/limit_size_20dp"
+                android:layout_height="@dimen/limit_size_20dp"
+                android:layout_marginStart="@dimen/limit_size_10dp"
+                android:layout_marginTop="7dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/unread_red_bg"
+                android:gravity="center"
+                android:text="99+"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size_12sp" />
+
+            <ImageView
+                android:id="@+id/bottom_home_2_img"
+                android:layout_width="@dimen/limit_size_17dp"
+                android:layout_height="@dimen/limit_size_17dp"
+                android:contentDescription="@string/todo"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_message_black"
+                android:layout_marginBottom="@dimen/limit_size_8dp"
+                app:srcCompat="@drawable/ic_message_black" />
+
+            <TextView
+                android:id="@+id/bottom_home_2_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_below="@id/bottom_home_2_img"
+                android:text="@string/home_bottom_message"
+                android:layout_marginBottom="@dimen/limit_size_15dp"
+                android:textSize="@dimen/font_size_10sp" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/bottom_home_3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible"
+            tools:ignore="MissingConstraints">
+
+            <ImageView
+                android:id="@+id/bottom_home_3_img"
+                android:layout_width="@dimen/limit_size_17dp"
+                android:layout_height="@dimen/limit_size_17dp"
+                android:contentDescription="@string/todo"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_dynamic_black"
+                app:srcCompat="@drawable/ic_dynamic_black" />
+
+            <TextView
+                android:id="@+id/bottom_home_3_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contacts"
+                android:textSize="@dimen/font_size_10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bottom_home_4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible"
+            tools:ignore="MissingConstraints">
+
+            <ImageView
+                android:id="@+id/bottom_home_4_img"
+                android:layout_width="@dimen/limit_size_17dp"
+                android:layout_height="@dimen/limit_size_17dp"
+                android:contentDescription="@string/todo"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_mine_black"
+                app:srcCompat="@drawable/ic_mine_black" />
+
+            <TextView
+                android:id="@+id/bottom_home_4_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_bottom_mine"
+                android:textSize="@dimen/font_size_10sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="data"
+            type="com.yb.livechatkt.vm.LoginViewModel" />
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <com.yb.livechatkt.view.LiveTitleBar
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            android:background="@color/theme_bg_color"
+            app:leftType="0"
+            app:leftTitle="@string/app_name"
+            app:centerType="1"
+            app:centerTitle="@string/app_name"
+            app:rightType="0"
+            app:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/login_by_phone_password"
+            android:textSize="@dimen/font_size_23sp"
+            android:layout_marginStart="@dimen/limit_size_20dp"
+            android:layout_marginTop="@dimen/limit_size_50dp" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            android:orientation="horizontal"
+            android:layout_marginStart="@dimen/limit_size_30dp"
+            android:layout_marginEnd="@dimen/limit_size_30dp"
+            android:background="@color/input_bg_color"
+            android:layout_marginTop="@dimen/limit_size_10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="+86"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/limit_size_10dp" />
+
+            <ImageView
+                android:layout_width="@dimen/limit_size_20dp"
+                android:layout_height="@dimen/limit_size_20dp"
+                android:src="@drawable/ic_baseline_arrow_drop_down_24"
+                android:layout_gravity="center_vertical" />
+
+            <EditText
+                android:id="@+id/phone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:hint="@string/input_phone_hint"
+                android:paddingLeft="@dimen/limit_size_10dp"
+                android:text="@={data.phone}"
+                 />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            android:orientation="horizontal"
+            android:layout_marginStart="@dimen/limit_size_30dp"
+            android:layout_marginEnd="@dimen/limit_size_30dp"
+            android:background="@color/input_bg_color"
+            android:layout_marginTop="@dimen/limit_size_20dp">
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:inputType="textPassword"
+                android:hint="@string/input_password_hint"
+                android:paddingLeft="@dimen/limit_size_10dp"
+                android:text="@={data.password}"
+                />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            android:text="@string/login"
+            android:clickable="true"
+            android:onClick="@{()->data.login()}"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginStart="@dimen/limit_size_30dp"
+            android:layout_marginEnd="@dimen/limit_size_30dp"
+            android:layout_marginTop="@dimen/limit_size_30dp"
+            android:background="@drawable/login_tv_bg"
+            android:textColor="@color/white" />
+
+
+    </LinearLayout>
+</layout>

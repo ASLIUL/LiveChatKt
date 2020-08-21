@@ -11,7 +11,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/normal_bg_color"
+        >
 
         <com.yb.livechatkt.view.LiveTitleBar
             android:id="@+id/liveTitleBar"
@@ -28,14 +30,48 @@
             app:textColor="@color/white"
             tools:ignore="MissingConstraints" />
 
+        <LinearLayout
+            android:id="@+id/service_group"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="@dimen/limit_size_50dp"
+            app:layout_constraintVertical_bias="0.01"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/liveTitleBar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="MissingConstraints"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/limit_size_40dp"
+                android:layout_height="@dimen/limit_size_40dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:src="@mipmap/group_header"
+                android:scaleType="centerCrop"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/hy_service"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                />
+        </LinearLayout>
+
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/contacts_recycler"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/limit_size_20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/liveTitleBar" />
+            app:layout_constraintTop_toBottomOf="@+id/service_group" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

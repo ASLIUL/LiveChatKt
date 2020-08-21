@@ -29,4 +29,32 @@ object NetConstant {
     const val ANIM_CHOOSER_GROUP_DATA = "anim_choose_group_data"
     const val PLEASE_CHOOSE_GROUP_DATA = "请选择要发送的群"
 
+    //发起会话的key 1,单聊 2，群聊 3 客服单聊
+    const val SESSION_TYPE = "session_type"
+
+    const val SESSION_P2P = 1
+    const val SESSION_TEAM = 2
+    const val SESSION_SERVICE = 3
+
+    //会话数据的key
+    const val CONVERSATION_DATA = "conversation_data"
+
+    //自定义消息类型
+    const val SHARE_LIVE_MESSAGE = 1
+
+    const val PLEASE_INPUT_CONNECT = "输入点内容吧"
+
+    //地区key
+    const val PROVINCE_ID = "provinceId"
+    const val CITY_ID = "cityId"
+    const val COUNTY_ID = "countyId"
+    const val PROVINCE_NAME = "provinceName"
+    const val CITY_NAME = "cityName"
+    const val COUNTY_NAME = "countyName"
+
+    //limit
+    const val CONNECT_LENGTH_NICKNAME:Int = 10
+    const val CONNECT_LENGTH_HYNUM = 20
+    const val CONNECT_LENGTH_SIGN = 100
+
 }

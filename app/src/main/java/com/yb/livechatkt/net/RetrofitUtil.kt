@@ -56,8 +56,8 @@ class RetrofitUtil {
 
         override fun intercept(chain: Interceptor.Chain): Response {
             var builder = chain.request().newBuilder();
-            builder.addHeader("uuid",SaveUserData.get(context).uuid)
-            builder.addHeader("token",SaveUserData.get(context).token)
+            builder.addHeader("uuid",SaveUserData.get().uuid)
+            builder.addHeader("token",SaveUserData.get().token)
             return chain.proceed(builder.build())
         }
 

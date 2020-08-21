@@ -1,5 +1,7 @@
 package com.yb.livechatkt.bean
 
+import java.io.Serializable
+
 data class RowX(
     val accid: String,
     val heamImg: String,
@@ -9,7 +11,7 @@ data class RowX(
     val signature: String
 
 
-) {
+) :Serializable{
     override fun toString(): String {
         return "RowX(accid='$accid', heamImg='$heamImg', id=$id, name='$name', sex=$sex, signature='$signature')"
     }

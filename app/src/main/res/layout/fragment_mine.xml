@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="data"
             type="com.yb.livechatkt.vm.MineViewModel" />
@@ -71,10 +72,45 @@
                     android:id="@+id/qr_code"
                     android:layout_width="@dimen/limit_size_30dp"
                     android:layout_height="@dimen/limit_size_30dp"
+                    android:src="@drawable/ic_qr_code_hint"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="@dimen/limit_size_80dp"
                     android:layout_marginEnd="@dimen/limit_size_40dp" />
             </RelativeLayout>
+
+
+
+
+            <com.yb.livechatkt.view.LiveIconTitleActionBar
+                android:id="@+id/find_service"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/limit_size_40dp"
+                app:layout_constraintVertical_bias="0.2"
+                app:icon="@drawable/ic_service_hi_hy_color"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
+                app:title="@string/find_service"
+                android:visibility="@{data.isShowService ? View.VISIBLE : View.GONE}"
+                tools:ignore="MissingConstraints" />
+
+            <com.yb.livechatkt.view.LiveIconTitleActionBar
+                android:id="@+id/update_hi_msg"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/limit_size_40dp"
+                app:layout_constraintVertical_bias="0"
+                app:icon="@drawable/ic_service_hi_hy_color"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/find_service"
+                app:title="@string/update_my_hi_message"
+                android:visibility="@{data.isShowService ? View.GONE : View.VISIBLE}"
+                tools:ignore="MissingConstraints" />
+
 
             <com.yb.livechatkt.view.LiveIconTitleActionBar
                 android:id="@+id/group_message"
@@ -82,10 +118,11 @@
                 android:layout_height="@dimen/limit_size_40dp"
                 app:icon="@drawable/ic_group_message_black"
                 android:background="@color/white"
+                app:layout_constraintVertical_bias="0"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
+                app:layout_constraintTop_toBottomOf="@+id/update_hi_msg"
                 app:title="@string/group_message"
                 tools:ignore="MissingConstraints" />
 
@@ -101,6 +138,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/group_message"
                 app:layout_constraintVertical_bias="0.0"
                 app:title="@string/service_off_line"
+                android:visibility="@{data.isShowService ? View.GONE : View.VISIBLE}"
                 tools:ignore="MissingConstraints" />
 
             <com.yb.livechatkt.view.LiveIconTitleActionBar

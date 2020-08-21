@@ -16,4 +16,12 @@ open class BaseFragment : Fragment(){
             startActivity(intent)
         }
     }
+    fun wyLoginFailed(boolean: Boolean){
+        if (!boolean){
+            NetConstant.responseTokenFailedMsg.showToast()
+            val intent = Intent(activity, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+    }
 }

@@ -2,6 +2,7 @@ package com.yb.livechatkt.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.yb.livechatkt.LiveChatKtApplication
 import java.lang.StringBuilder
 
 class SaveUserData {
@@ -19,9 +20,9 @@ class SaveUserData {
                 }
                 return field
             }
-        fun get(context: Context): SaveUserData{
-            sharedPreferences = context.getSharedPreferences(NetConstant.spSaveKey,0);
-            edit = context.getSharedPreferences(NetConstant.spSaveKey,0).edit()
+        fun get(): SaveUserData{
+            sharedPreferences = LiveChatKtApplication.context.getSharedPreferences(NetConstant.spSaveKey,0);
+            edit = LiveChatKtApplication.context.getSharedPreferences(NetConstant.spSaveKey,0).edit()
             return instance!!
         }
 
@@ -103,6 +104,13 @@ class SaveUserData {
         }
     get() = sharedPreferences?.getBoolean("is_notification",true)
 
+    var isNeedUpdateDB:Boolean
+    set(value){
+        edit?.apply {
+            putBoolean("need_update",value)
+        }
+    }
+    get() = sharedPreferences?.getBoolean("need_update",true)
 
 
 

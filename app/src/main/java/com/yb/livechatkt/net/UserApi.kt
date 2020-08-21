@@ -1,6 +1,9 @@
 package com.yb.livechatkt.net
 
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.yb.livechatkt.bean.*
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
 
@@ -33,5 +36,44 @@ interface UserApi {
     //超管发送消息
     @POST(LiveChatUrl.adminSendMessage)
     suspend fun adminSendMessage(@Body body: RequestBody) : Result<Any>
+
+    //获取客服账号
+    @GET(LiveChatUrl.getServiceChatAccount)
+    suspend fun getServiceChatAccount() : Result<ServicePerson>
+
+    //更改客服在线状态
+    @PUT(LiveChatUrl.serviceUpdateState)
+    suspend fun updateServiceState(@Path("status") status:String) : Result<Any>
+
+    //获取招呼语
+    @GET(LiveChatUrl.serviceGetHiMessage)
+    suspend fun getServiceHiMessage() :Result<List<ServiceHiMsg>>
+
+    //修改招呼语
+    @POST(LiveChatUrl.serviceUpdateHiMessage)
+    suspend fun updateServiceHiMessage(@Body requestBody: RequestBody) : Result<Any>
+
+    //更改我自己的信息
+    @Headers("Content-Type: application/json")
+    @PUT(LiveChatUrl.updateMyData)
+    suspend fun updateMyData(@Body requestBody: RequestBody):Result<Any>
+
+
+    //更改我的花漾账号
+    @Headers("Content-Type: application/json")
+    @PUT(LiveChatUrl.updateMyHyNum)
+    suspend fun updateMyHyNum(@Query("uni_id")uniId:String):Result<Any>
+
+
+    //更改我的花漾账号
+    @Multipart
+    @PUT(LiveChatUrl.updateMyHeader)
+    suspend fun updateMyHeader(@Part file: MultipartBody.Part):Result<Any>
+
+    @Multipart
+    @POST(LiveChatUrl.completeInformation)
+    suspend fun completeInformation(@Part parts:List<MultipartBody.Part>):Result<Any>
+
+
 
 }

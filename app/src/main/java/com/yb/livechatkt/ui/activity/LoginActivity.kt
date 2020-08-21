@@ -24,13 +24,13 @@ public class LoginActivity : BaseAppActivity() {
 
     override fun initListener() {
         viewModel.loginDataLiveData.observe(this, Observer {
-            SaveUserData.get(this).accId =  it.accid
-            SaveUserData.get(this).token =  it.token
-            SaveUserData.get(this).username =  it.name
-            SaveUserData.get(this).id =  it.id
-            SaveUserData.get(this).imToken =  it.imToken
-            SaveUserData.get(this).qrCodeUrl =  it.qrCodeUrl
-            SaveUserData.get(this).role =  it.role
+            SaveUserData.get().accId =  it.accid
+            SaveUserData.get().token =  it.token
+            SaveUserData.get().username =  it.name
+            SaveUserData.get().id =  it.id
+            SaveUserData.get().imToken =  it.imToken
+            SaveUserData.get().qrCodeUrl =  it.qrCodeUrl
+            SaveUserData.get().role =  it.role
             Log.d(TAG, "initListener: "+it.imToken+"\t"+it.accid)
             viewModel.wyLogin(it.accid,it.imToken)
         })

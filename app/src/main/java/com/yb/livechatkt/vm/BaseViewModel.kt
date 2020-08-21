@@ -7,6 +7,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.netease.nimlib.sdk.NIMClient
+import com.netease.nimlib.sdk.StatusCode
+import com.netease.nimlib.sdk.auth.AuthService
+import com.netease.nimlib.sdk.auth.AuthServiceObserver
 import com.netease.nimlib.sdk.msg.MsgServiceObserve
 import com.netease.nimlib.sdk.msg.model.IMMessage
 import com.yb.livechatkt.LiveChatKtApplication
@@ -27,12 +30,24 @@ import kotlin.math.log
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
+     val BaseTAG = "BaseViewModel"
+
+    var receiveMessageLiveData = MutableLiveData<List<IMMessage>>()
+    var isStartMonitorMessage = MutableLiveData<Boolean>()
+    //登陆状态监听
+    var wyLoginMonitor = MutableLiveData<Boolean>()
+
 
     init {
-        var receiveMessageLiveData = MutableLiveData<List<IMMessage>>()
+        isStartMonitorMessage.value = true
+        wyLoginMonitor.value = true
         NIMClient.getService(MsgServiceObserve::class.java).observeReceiveMessage({
                 receiveMessageLiveData.value = it
-            }, true)
+            }, isStartMonitorMessage.value!!)
+        NIMClient.getService(AuthServiceObserver::class.java).observeOnlineStatus({
+            if (it == StatusCode.LOGINED) wyLoginMonitor.value = true
+            if (it == StatusCode.UNLOGIN || it == StatusCode.PWD_ERROR || it == StatusCode.VER_ERROR) wyLoginMonitor.value = false
+        }, true)
     }
 
     val TAG = this.javaClass.simpleName
@@ -43,7 +58,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     var isShowLoading = MutableLiveData<Boolean>()
     var isShowError = MutableLiveData<ErrorMessageBean>()
-    var isSuccessNoT = MutableLiveData<Boolean>()
 
     fun showLoading(){
         isShowLoading.value =  true
@@ -81,14 +95,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
                 if (result!!.code == NetConstant.responseSuccessCode) {//请求成功
                     liveData.value = result!!.data
                 } else if (result!!.code == NetConstant.responseTokenFailedCode) {
-                    Log.d(TAG, "launch: token失效")
                     tokenError()
                 }else{
-                    Log.d(TAG, "launch: "+result?.code!!+"\t"+result?.msg!!)
                     showError(ErrorMessageBean(result?.code!!,result?.msg!!))
                 }
             } catch (e: Throwable) {//接口请求失败
-                Log.d(TAG, "launch: 失败"+e.message)
                 showError(ErrorMessageBean(NetConstant.responseErrorCode,NetConstant.reponseErrorMsg))
             } finally {//请求结束
                 dismissLoading()
@@ -96,12 +107,10 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun launchNoT(
+    fun launchAny(
         block : suspend CoroutineScope.() -> Result<Any>,
-        isShowLoading: Boolean = false,
-        isShowError: Boolean = false
+        liveData: MutableLiveData<Boolean>
     ){
-        if (isShowLoading) showLoading()
         viewModelScope.launch {
             try {
                 var result:Result<Any>? = null
@@ -109,13 +118,13 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
                     result = block()
                 }
                 if (result!!.code == NetConstant.responseSuccessCode){
-                    isSuccessNoT.value = true
+                    liveData.value = true
                 }else {
-                    isSuccessNoT.value = false
-                    showError(ErrorMessageBean(result!!.code,result!!.msg))
+                    liveData.value = false
+                    Log.d(TAG, "launchAny: ${result!!.code} \t ${result!!.msg}")
                 }
             }catch (e:Throwable){
-                isSuccessNoT.value = false
+                liveData.value = false
             }finally {
                 dismissLoading()
             }
@@ -149,6 +158,31 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
             }finally {
             }
         }
+    }
+    fun launchKey(block: suspend CoroutineScope.() -> Result<Any>, liveData: MutableLiveData<MutableMap<String, LiveEnum>>, key: String){
+
+        var hashMap:MutableMap<String,LiveEnum> = HashMap()
+        hashMap[key] = LiveEnum.sending
+        viewModelScope.launch {
+            try {
+                var result:Result<Any>? = null
+                withContext(Dispatchers.IO){
+                    result = block()
+                }
+                if (result?.code == NetConstant.responseSuccessCode){
+                    hashMap[key] = LiveEnum.success
+                }else if (result?.code == NetConstant.responseTokenFailedCode){
+                    hashMap[key]= LiveEnum.error
+                    tokenError()
+                }else{
+                    hashMap[key]= LiveEnum.error
+                }
+                liveData.postValue(hashMap)
+            }catch (e:Throwable){
+            }
+        }
+
+
     }
 
 }

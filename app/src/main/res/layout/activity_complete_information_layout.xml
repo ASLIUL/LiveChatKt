@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.yb.livechatkt.view.LiveTitleBar
+            android:id="@+id/liveTitleBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            android:background="@color/theme_bg_color"
+            app:centerTitle="@string/complete_data"
+            app:centerType="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0"
+            app:leftType="0"
+            app:textColor="@color/white"
+            tools:ignore="MissingConstraints" />
+
+        <RelativeLayout
+            android:id="@+id/header_action"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/liveTitleBar"
+            app:layout_constraintVertical_bias="0.06"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:text="@string/mine_header"
+                android:textSize="@dimen/font_size_18sp"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/header"
+                android:layout_width="@dimen/limit_size_40dp"
+                android:layout_height="@dimen/limit_size_40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/limit_size_50dp"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/ic_normal_header" />
+
+            <ImageView
+                android:layout_width="@dimen/limit_size_20dp"
+                android:layout_height="@dimen/limit_size_20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/limit_size_20dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_right_action_fine_black" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_05dp"
+            android:background="@color/view_dividing_line"
+            app:layout_constraintBottom_toBottomOf="@+id/header_action"
+            app:layout_constraintTop_toBottomOf="@+id/header_action"
+            tools:ignore="MissingConstraints" />
+
+        <RelativeLayout
+            android:id="@+id/nickname_action"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header_action"
+            app:layout_constraintVertical_bias="0"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/nickname_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:text="@string/mine_nickname"
+                android:textSize="@dimen/font_size_18sp"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/nickname"
+                android:layout_width="@dimen/limit_size_40dp"
+                android:layout_height="@dimen/limit_size_40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/limit_size_50dp"
+                android:layout_toRightOf="@id/nickname_title"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:gravity="end|center_vertical"
+                android:textSize="@dimen/font_size_18sp"
+                />
+
+            <ImageView
+                android:layout_width="@dimen/limit_size_20dp"
+                android:layout_height="@dimen/limit_size_20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/limit_size_20dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_right_action_fine_black" />
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_05dp"
+            android:background="@color/view_dividing_line"
+            app:layout_constraintBottom_toBottomOf="@+id/nickname_action"
+            app:layout_constraintTop_toBottomOf="@+id/nickname_action"
+            tools:ignore="MissingConstraints" />
+
+        <RelativeLayout
+            android:id="@+id/hynum_action"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nickname_action"
+            app:layout_constraintVertical_bias="0"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/hynum_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:text="@string/mine_hy_num"
+                android:textSize="@dimen/font_size_18sp"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/hynum"
+                android:layout_width="@dimen/limit_size_40dp"
+                android:layout_height="@dimen/limit_size_40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/limit_size_50dp"
+                android:layout_toRightOf="@id/hynum_title"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:gravity="end|center_vertical"
+                android:textSize="@dimen/font_size_18sp"
+                />
+
+            <ImageView
+                android:layout_width="@dimen/limit_size_20dp"
+                android:layout_height="@dimen/limit_size_20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/limit_size_20dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_right_action_fine_black" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_05dp"
+            android:background="@color/view_dividing_line"
+            app:layout_constraintBottom_toBottomOf="@+id/hynum_action"
+            app:layout_constraintTop_toBottomOf="@+id/hynum_action"
+            tools:ignore="MissingConstraints" />
+
+        <RelativeLayout
+            android:id="@+id/sex_action"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hynum_action"
+            app:layout_constraintVertical_bias="0"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:text="@string/mine_sex"
+                android:textSize="@dimen/font_size_18sp"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/sex"
+                android:layout_width="@dimen/limit_size_40dp"
+                android:layout_height="@dimen/limit_size_40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/font_size_18sp"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="@dimen/limit_size_50dp" />
+
+            <ImageView
+                android:layout_width="@dimen/limit_size_20dp"
+                android:layout_height="@dimen/limit_size_20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/limit_size_20dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_right_action_fine_black" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_05dp"
+            android:background="@color/view_dividing_line"
+            app:layout_constraintBottom_toBottomOf="@+id/sex_action"
+            app:layout_constraintTop_toBottomOf="@+id/sex_action"
+            tools:ignore="MissingConstraints" />
+
+        <RelativeLayout
+            android:id="@+id/address_action"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sex_action"
+            app:layout_constraintVertical_bias="0"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/address_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:text="@string/mine_address"
+                android:textSize="@dimen/font_size_18sp"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/limit_size_40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/address_title"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:gravity="end|center_vertical"
+                android:textSize="@dimen/font_size_18sp"
+                android:layout_marginEnd="@dimen/limit_size_50dp" />
+
+            <ImageView
+                android:layout_width="@dimen/limit_size_20dp"
+                android:layout_height="@dimen/limit_size_20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/limit_size_20dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_right_action_fine_black" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_05dp"
+            android:background="@color/view_dividing_line"
+            app:layout_constraintBottom_toBottomOf="@+id/address_action"
+            app:layout_constraintTop_toBottomOf="@+id/address_action"
+            tools:ignore="MissingConstraints" />
+
+        <RelativeLayout
+            android:id="@+id/sign_action"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/address_action"
+            app:layout_constraintVertical_bias="0"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/sign_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:text="@string/mine_sign"
+                android:textSize="@dimen/font_size_18sp"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/sign"
+                android:layout_width="@dimen/limit_size_40dp"
+                android:layout_height="@dimen/limit_size_40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/limit_size_50dp"
+                android:layout_toRightOf="@id/sign_title"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:gravity="end|center_vertical"
+                />
+
+            <ImageView
+                android:layout_width="@dimen/limit_size_20dp"
+                android:layout_height="@dimen/limit_size_20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/limit_size_20dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_right_action_fine_black" />
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_05dp"
+            android:background="@color/view_dividing_line"
+            app:layout_constraintBottom_toBottomOf="@+id/sign_action"
+            app:layout_constraintTop_toBottomOf="@+id/sign_action"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/submit"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view3"
+            app:layout_constraintVertical_bias="0.3"
+            android:textSize="@dimen/font_size_18sp"
+            android:text="@string/sure"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_marginEnd="@dimen/limit_size_50dp"
+            android:layout_marginStart="@dimen/limit_size_50dp"
+            android:background="@drawable/sure_tv_bg"
+            tools:ignore="MissingConstraints" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

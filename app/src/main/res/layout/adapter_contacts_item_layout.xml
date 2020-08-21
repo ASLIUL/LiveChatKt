@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    >
+
+    <TextView
+        android:id="@+id/letter"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/limit_size_30dp"
+        app:layout_constraintBottom_toTopOf="@+id/contacts_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="H"
+        android:paddingLeft="@dimen/limit_size_10dp"
+        android:gravity="center_vertical"
+        android:background="@color/normal_bg_color"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/contacts_header"
+        android:layout_width="@dimen/limit_size_50dp"
+        android:layout_height="@dimen/limit_size_50dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintHorizontal_bias="0.05"
+        android:src="@drawable/ic_normal_header"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/contacts_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_bias="0.1"
+        android:textSize="@dimen/font_size_18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/contacts_header"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:text="@string/hy_service" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/limit_size_05dp"
+        android:layout_marginTop="@dimen/limit_size_5dp"
+        android:background="@color/view_dividing_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contacts_header"
+        tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

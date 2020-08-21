@@ -1,7 +1,5 @@
 package com.yb.livechatkt.ui.activity
 
-import android.text.Editable
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -16,13 +14,12 @@ import com.yb.livechatkt.bean.LiveEnum
 import com.yb.livechatkt.bean.ServiceGroup
 import com.yb.livechatkt.databinding.ActivityAdminGroupMessageLayoutBinding
 import com.yb.livechatkt.ui.adapter.GroupMessageRecyclerAdapter
-import com.yb.livechatkt.ui.model.InputPanel
-import com.yb.livechatkt.ui.model.InputPanelInterface
+import com.yb.livechatkt.ui.model.GroupInputPanel
+import com.yb.livechatkt.ui.model.GroupMSgInputPanelInterface
 import com.yb.livechatkt.util.NetConstant
 import com.yb.livechatkt.vm.AdminGroupMessageViewModel
-import kotlin.math.log
 
-class AdminGroupMessageActivity : BaseAppActivity(),InputPanelInterface {
+class AdminGroupMessageActivity : BaseAppActivity(),GroupMSgInputPanelInterface {
 
     val viewModel by viewModels<AdminGroupMessageViewModel>()
     lateinit var binding:ActivityAdminGroupMessageLayoutBinding
@@ -31,12 +28,12 @@ class AdminGroupMessageActivity : BaseAppActivity(),InputPanelInterface {
     private var groupMessageRecyclerAdapter:GroupMessageRecyclerAdapter? = null
     private var groupMessages:MutableMap<String,GroupMessageBean> = HashMap()
     private var groupMessagesByList:MutableList<GroupMessageBean> = ArrayList()
-    lateinit var inputPanel: InputPanel
+    lateinit var groupInputPanel: GroupInputPanel
 
     override fun initView() {
         binding = DataBindingUtil.setContentView(this,getLayout())
         binding.lifecycleOwner = this
-        inputPanel = InputPanel(this,binding.root,this)
+        groupInputPanel = GroupInputPanel(this,binding.root,this)
         val type = object : TypeToken<Map<String,ServiceGroup>>() {}.type
         serviceGroups = Gson().fromJson(intent.getStringExtra(NetConstant.ANIM_CHOOSER_GROUP_DATA),type)
         val jsonArray = JsonArray()

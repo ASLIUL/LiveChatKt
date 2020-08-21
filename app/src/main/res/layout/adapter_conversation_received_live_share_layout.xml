@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/message_layout"
+    android:padding="@dimen/limit_size_10dp">
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/font_size_12sp"
+        app:layout_constraintVertical_bias="0.1"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="@dimen/limit_size_10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/header_img"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:text="fsfsdfsdfspfshof" />
+
+    <RelativeLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@mipmap/message_left"
+        android:layout_marginTop="@dimen/limit_size_10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/header_img"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintVertical_bias="0.02"
+        android:padding="@dimen/limit_size_10dp"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/live_cover"
+            android:layout_width="@dimen/limit_size_50dp"
+            android:layout_height="@dimen/limit_size_50dp"
+            android:layout_marginEnd="@dimen/limit_size_10dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_normal_header"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="@dimen/limit_size_10dp"
+            />
+
+
+        <TextView
+            android:id="@+id/msg_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/live_cover"
+            android:layout_marginEnd="@dimen/limit_size_30dp"
+            android:layout_marginStart="@dimen/limit_size_5dp"
+            android:maxEms="8"
+            />
+
+        <TextView
+            android:id="@+id/live_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/msg_title"
+            android:textSize="@dimen/font_size_9sp"
+            android:layout_marginTop="@dimen/limit_size_5dp"
+            android:layout_toRightOf="@id/live_cover"
+            android:layout_marginStart="@dimen/limit_size_5dp"
+            />
+
+
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/header_img"
+        android:layout_width="@dimen/limit_size_50dp"
+        android:layout_height="@dimen/limit_size_50dp"
+        android:layout_marginTop="@dimen/limit_size_10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_normal_header" />
+
+    <TextView
+        android:id="@+id/send_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/limit_size_5dp"
+        android:textSize="@dimen/font_size_9sp"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintEnd_toEndOf="@+id/linearLayout3"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout3"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        tools:ignore="MissingConstraints"
+        tools:text="@string/touch_recording" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,8 @@
 package com.yb.livechatkt.ui.model
 
 import com.yb.livechatkt.bean.GroupMessageBean
-import com.yb.livechatkt.bean.VoiceMessage
 
-interface InputPanelInterface {
+interface GroupMSgInputPanelInterface {
 
     fun sendTextMessage(textMessage: GroupMessageBean)
 
@@ -14,5 +13,7 @@ interface InputPanelInterface {
     fun sendVoiceMessage(voiceMessage: GroupMessageBean)
 
     fun getToAccIds():String
+
+
 
 }

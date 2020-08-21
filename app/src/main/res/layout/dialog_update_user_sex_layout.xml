@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/limit_size_10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_sex"
+            android:textSize="@dimen/font_size_20sp" />
+
+        <RadioGroup
+            android:id="@+id/sex_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="@dimen/limit_size_10dp"
+            android:layout_marginEnd="@dimen/limit_size_30dp">
+
+            <RadioButton
+                android:id="@+id/sex_men"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/limit_size_30dp"
+                android:text="@string/men" />
+
+            <RadioButton
+                android:id="@+id/sex_women"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/limit_size_10dp"
+                android:text="@string/women" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/action_tips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_marginEnd="@dimen/limit_size_30dp"
+            android:layout_marginStart="@dimen/limit_size_30dp">
+
+            <ImageView
+                android:layout_width="@dimen/limit_size_15dp"
+                android:layout_height="@dimen/limit_size_15dp"
+                android:src="@drawable/ic_careful_black"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/tips_connect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/limit_size_10dp"
+                android:layout_marginEnd="@dimen/limit_size_10dp"
+                android:text="@string/sure" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end"
+            android:gravity="end"
+            android:layout_marginEnd="@dimen/limit_size_30dp"
+            android:layout_marginTop="@dimen/limit_size_20dp">
+
+            <TextView
+                android:id="@+id/cancel_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:clickable="true"
+                android:layout_marginEnd="@dimen/limit_size_40dp"
+                android:padding="@dimen/limit_size_10dp" />
+
+            <TextView
+                android:id="@+id/sure_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sure"
+                android:clickable="true"
+                android:padding="@dimen/limit_size_10dp" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

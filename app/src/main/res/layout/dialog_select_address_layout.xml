@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/select_address_bg"
+        >
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_address"
+            android:textSize="@dimen/font_size_23sp"
+            android:layout_marginTop="@dimen/limit_size_20dp"
+            android:layout_marginStart="@dimen/limit_size_20dp"
+            />
+        <ImageView
+            android:id="@+id/close"
+            android:layout_width="@dimen/limit_size_20dp"
+            android:layout_height="@dimen/limit_size_20dp"
+            android:src="@drawable/ic_close_black"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/limit_size_20dp"
+            android:layout_marginEnd="@dimen/limit_size_20dp"
+            />
+
+
+        <com.yb.livechatkt.view.LiveSelectAddressView
+            android:id="@+id/address_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/title"
+            />
+
+    </RelativeLayout>
+</layout>

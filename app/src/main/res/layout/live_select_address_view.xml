@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_address"
+                android:textSize="@dimen/font_size_20sp"
+                android:layout_centerVertical="true" />
+
+            <ImageView
+                android:id="@+id/close"
+                android:layout_width="@dimen/limit_size_20dp"
+                android:layout_height="@dimen/limit_size_20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/limit_size_30dp"
+                android:src="@drawable/ic_close_black"
+                android:scaleType="centerCrop"
+                android:layout_centerVertical="true" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="@dimen/limit_size_20dp"
+            android:layout_marginEnd="@dimen/limit_size_20dp">
+
+            <TextView
+                android:id="@+id/province"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_16sp"
+                android:text="@string/please_choose"
+                android:layout_marginEnd="@dimen/limit_size_10dp" />
+
+            <TextView
+                android:id="@+id/city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/limit_size_10dp"
+                android:textSize="@dimen/font_size_16sp"
+                android:text="@string/please_choose"
+                android:layout_marginEnd="@dimen/limit_size_10dp" />
+
+            <TextView
+                android:id="@+id/county"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/limit_size_10dp"
+                android:textSize="@dimen/font_size_16sp"
+                android:text="@string/please_choose"
+                android:layout_marginEnd="@dimen/limit_size_10dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_05dp"
+            android:background="@color/view_dividing_line" />
+
+        <ListView
+            android:id="@+id/data_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+</layout>

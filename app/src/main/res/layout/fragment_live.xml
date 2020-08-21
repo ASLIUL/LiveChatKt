@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
@@ -10,17 +11,43 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        >
+        <com.yb.livechatkt.view.LiveTitleBar
+            android:id="@+id/liveTitleBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_50dp"
+            app:leftType="0"
+            app:rightType="0"
+            app:centerType="1"
+            app:textColor="@color/white"
+            android:background="@color/theme_bg_color"
+            app:centerTitle="@string/home"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/limit_size_05dp"
+            android:background="@color/view_dividing_line"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/liveTitleBar"
+            tools:ignore="MissingConstraints" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/live_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_margin="@dimen/limit_size_10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/view1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

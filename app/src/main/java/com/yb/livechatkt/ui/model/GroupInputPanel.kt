@@ -23,7 +23,7 @@ import com.yb.livechatkt.bean.GroupMessageBean
 import com.yb.livechatkt.util.showToast
 import java.io.File
 
-class InputPanel(private var activity: AppCompatActivity,rootView: View,private var inputPanelInterface: InputPanelInterface) : IAudioRecordCallback {
+class GroupInputPanel(private var activity: AppCompatActivity, rootView: View, private var groupMSgInputPanelInterface: GroupMSgInputPanelInterface) : IAudioRecordCallback {
 
     var timer: Chronometer = rootView.findViewById(R.id.recording_time)
     var recordTips: TextView = rootView.findViewById(R.id.record_tips)
@@ -83,8 +83,8 @@ class InputPanel(private var activity: AppCompatActivity,rootView: View,private 
     }
 
     private fun sendTextMessage(){
-        var bean = GroupMessageBean.createTextMessage(msgConnect.text.toString(),inputPanelInterface.getToAccIds())
-        inputPanelInterface.sendTextMessage(bean)
+        var bean = GroupMessageBean.createTextMessage(msgConnect.text.toString(),groupMSgInputPanelInterface.getToAccIds())
+        groupMSgInputPanelInterface.sendTextMessage(bean)
     }
 
     fun onActivityResult(requestCode:Int,resultCode:Int,data:Intent){
@@ -109,15 +109,15 @@ class InputPanel(private var activity: AppCompatActivity,rootView: View,private 
     private fun createFileMessage(fileDatas:List<String>){
         when(messageType){
             1->{
-                val imageMessage = GroupMessageBean.createPicMessage(File(fileDatas[0]),"",inputPanelInterface.getToAccIds())
-                inputPanelInterface.sendImageMessage(imageMessage)
+                val imageMessage = GroupMessageBean.createPicMessage(File(fileDatas[0]),"",groupMSgInputPanelInterface.getToAccIds())
+                groupMSgInputPanelInterface.sendImageMessage(imageMessage)
             }
             2 ->{
 
             }
             3 ->{
-                val videoMessage = GroupMessageBean.createVideoMessage(File(fileDatas[0]),"",inputPanelInterface.getToAccIds())
-                inputPanelInterface.sendVideoMessage(videoMessage)
+                val videoMessage = GroupMessageBean.createVideoMessage(File(fileDatas[0]),"",groupMSgInputPanelInterface.getToAccIds())
+                groupMSgInputPanelInterface.sendVideoMessage(videoMessage)
             }
         }
     }
@@ -200,8 +200,8 @@ class InputPanel(private var activity: AppCompatActivity,rootView: View,private 
 
     override fun onRecordSuccess(audioFile: File?, audioLength: Long, recordType: RecordType?) {
         if (!isCancelRecord){
-            val bean = GroupMessageBean.createVoiceMessage(audioFile!!,"",audioLength,inputPanelInterface.getToAccIds())
-            inputPanelInterface.sendVoiceMessage(bean)
+            val bean = GroupMessageBean.createVoiceMessage(audioFile!!,"",audioLength,groupMSgInputPanelInterface.getToAccIds())
+            groupMSgInputPanelInterface.sendVoiceMessage(bean)
         }
     }
 

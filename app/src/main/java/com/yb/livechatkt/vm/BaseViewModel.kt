@@ -19,6 +19,7 @@ import com.yb.livechatkt.bean.LiveEnum
 import com.yb.livechatkt.net.Result
 import com.yb.livechatkt.net.RetrofitUtil
 import com.yb.livechatkt.net.UserApi
+import com.yb.livechatkt.ui.activity.HomeMainActivity
 import com.yb.livechatkt.ui.activity.LoginActivity
 import com.yb.livechatkt.util.NetConstant
 import com.yb.livechatkt.util.showToast
@@ -69,7 +70,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         isShowError.value = error
     }
     fun tokenError(){
-        Log.d(TAG, "tokenError: 啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊")
         tokenFailed.value = true
     }
 
@@ -86,7 +86,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         isShowError: Boolean = true
     ) {
         if (isShowLoading) showLoading()
-        viewModelScope.launch {
+        viewModelScope.launch { HomeMainActivity::class.java
             try {
                 var result: Result<T>? = null
                 withContext(Dispatchers.IO) {

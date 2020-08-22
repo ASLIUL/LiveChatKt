@@ -57,4 +57,9 @@ object NetConstant {
     const val CONNECT_LENGTH_HYNUM = 20
     const val CONNECT_LENGTH_SIGN = 100
 
+    const val SHARE_LIVE_USER_ID = "share_user_id"
+    const val LIVE_ID = "live_id"
+
+    const val NOT_INPUT_SOMETHING = "不可以发送空消息哦"
+    const val EXIT_LIVE = 100
 }

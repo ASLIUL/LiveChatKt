@@ -1,10 +1,11 @@
 package com.yb.livechatkt.view
 
 import android.content.Context
+import android.util.AttributeSet
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import com.yb.livechatkt.R
 
-class NormalGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context) {
+class NormalGSYVideoPlayer(context: Context,attributeSet: AttributeSet) : StandardGSYVideoPlayer(context,attributeSet) {
 
     fun startPlay(){
         prepareVideo()

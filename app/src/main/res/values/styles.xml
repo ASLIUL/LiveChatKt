@@ -19,9 +19,21 @@
         <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
         <item name="android:windowExitAnimation">@anim/dialog_exit</item>
     </style>
-    <declare-styleable name="RoundImageView">
-        <attr name="border_width" format="dimension"></attr>
-        <attr name="border_color" format="color"></attr>
-    </declare-styleable>
+    <style name="liveInputPanel" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowAnimationStyle">@style/view_component_bottom_animation</item>
+    </style>
+    <style name="view_component_bottom_animation">
+        <item name="android:activityOpenEnterAnimation">@anim/push_bottom_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/no_change_default</item>
+        <item name="android:activityCloseEnterAnimation">@anim/no_change_default</item>
+        <item name="android:activityCloseExitAnimation">@anim/push_bottom_out</item>
+    </style>
 
 </resources>

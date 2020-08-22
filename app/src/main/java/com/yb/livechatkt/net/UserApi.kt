@@ -70,9 +70,17 @@ interface UserApi {
     @PUT(LiveChatUrl.updateMyHeader)
     suspend fun updateMyHeader(@Part file: MultipartBody.Part):Result<Any>
 
+    //补全信息
     @Multipart
     @POST(LiveChatUrl.completeInformation)
     suspend fun completeInformation(@Part parts:List<MultipartBody.Part>):Result<Any>
+
+    //获取直播间信息无分享人的
+    @GET(LiveChatUrl.getLiveRoomDataByLiveId)
+    suspend fun getLiveRoomDataByIdAndShare(@Query("id") id:Int,@Query("user_id") user_id:Int) : Result<LiveRoomBean>
+
+    @GET(LiveChatUrl.getLiveRoomDataByLiveId)
+    suspend fun getLiveRoomDataByIdNoShare(@Query("id") id:Int) : Result<LiveRoomBean>
 
 
 

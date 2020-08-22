@@ -17,4 +17,8 @@
         <attr name="title" format="string"/>
         <attr name="dic" format="reference"/>
     </declare-styleable>
+    <declare-styleable name="RoundImageView">
+        <attr name="border_width" format="dimension"></attr>
+        <attr name="border_color" format="color"></attr>
+    </declare-styleable>
 </resources>

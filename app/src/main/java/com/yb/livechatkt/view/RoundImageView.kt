@@ -10,7 +10,11 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.yb.livechatkt.R
 
-class RoundImageView(context: Context,attributeSet: AttributeSet,defStyle:Int) : AppCompatImageView(context) {
+class RoundImageView(context: Context, attributeSet: AttributeSet) : AppCompatImageView(
+    context,
+    attributeSet,
+    0
+) {
 
 
     private var SCALE_TYPE = ScaleType.CENTER_CROP
@@ -45,7 +49,7 @@ class RoundImageView(context: Context,attributeSet: AttributeSet,defStyle:Int) :
     init {
         val a = context.obtainStyledAttributes(
             attributeSet,
-            R.styleable.RoundImageView, defStyle, 0
+            R.styleable.RoundImageView, 0, 0
         )
 
         mBorderWidth = a.getDimensionPixelSize(

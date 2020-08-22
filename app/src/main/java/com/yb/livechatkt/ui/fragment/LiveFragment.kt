@@ -15,6 +15,7 @@ import com.yb.livechatkt.bean.Row
 import com.yb.livechatkt.databinding.FragmentLiveBinding
 import com.yb.livechatkt.ui.activity.LivePlayActivity
 import com.yb.livechatkt.ui.adapter.HomeLiveRecyclerAdapter
+import com.yb.livechatkt.util.NetConstant
 import com.yb.livechatkt.vm.LiveViewModel
 
 class LiveFragment : BaseFragment() {
@@ -58,7 +59,7 @@ class LiveFragment : BaseFragment() {
         adapter.onItemClickListener = object : HomeLiveRecyclerAdapter.OnItemClickListener{
             override fun itemClick(view: View, row: Row, position: Int) {
                 var intent = Intent(requireContext(),LivePlayActivity::class.java)
-                intent.putExtra("live_id",row.id)
+                intent.putExtra(NetConstant.LIVE_ID,row.id)
                 startActivity(intent)
             }
 

@@ -42,6 +42,9 @@ public class LoginActivity : BaseAppActivity() {
                 resources.getString(R.string.login_failed).showToast()
             }
         })
+        viewModel.isShowError.observe(this, Observer {
+            it.msg.showToast()
+        })
     }
 
     override fun getLayout(): Int {

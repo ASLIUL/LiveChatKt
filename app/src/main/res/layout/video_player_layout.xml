@@ -4,14 +4,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/surface_container"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:gravity="center">-->
-
-<!--    </RelativeLayout>-->
-
     <FrameLayout
         android:id="@+id/surface_container"
         android:layout_width="match_parent"
@@ -19,47 +11,5 @@
         android:gravity="center">
 
     </FrameLayout>
-
-
-
-<!--    <ProgressBar-->
-<!--        android:id="@+id/loading"-->
-<!--        style="?android:attr/progressBarStyleLarge"-->
-<!--        android:layout_width="28dp"-->
-<!--        android:layout_height="28dp"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_centerVertical="true"-->
-<!--        android:visibility="gone" />-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/start"-->
-<!--        android:layout_width="60dp"-->
-<!--        android:layout_height="60dp"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_centerVertical="true"-->
-<!--        android:layout_gravity="center_vertical"-->
-<!--        android:src="@drawable/video_click_play_selector" />-->
-
-
-<!--    <ImageView-->
-<!--        android:id="@+id/small_close"-->
-<!--        android:layout_width="30dp"-->
-<!--        android:layout_height="30dp"-->
-<!--        android:paddingLeft="10dp"-->
-<!--        android:paddingTop="10dp"-->
-<!--        android:scaleType="centerInside"-->
-<!--        android:src="@drawable/video_small_close"-->
-<!--        android:visibility="gone" />-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/lock_screen"-->
-<!--        android:layout_width="30dp"-->
-<!--        android:layout_height="30dp"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:layout_centerVertical="true"-->
-<!--        android:layout_marginRight="50dp"-->
-<!--        android:scaleType="centerInside"-->
-<!--        android:src="@drawable/unlock"-->
-<!--        android:visibility="gone" />-->
 
 </RelativeLayout>

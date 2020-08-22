@@ -55,5 +55,8 @@ object LiveChatUrl {
     //补全信息
     const val completeInformation = "/live/api/user/saveUserInfor"
 
+    //根据liveId获取直播间详细信息
+    const val getLiveRoomDataByLiveId = "/home/search/searchLiveById"
+
 
 }

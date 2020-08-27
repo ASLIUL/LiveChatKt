@@ -43,7 +43,6 @@ class LiveFragment : BaseFragment() {
     }
 
     private fun initView(){
-        val data = BannerDataBean.getData()
         binding.banner.adapter = object :BannerImageAdapter<BannerDataBean>(BannerDataBean.getData()){
             override fun onBindView(
                 holder: BannerImageHolder?,

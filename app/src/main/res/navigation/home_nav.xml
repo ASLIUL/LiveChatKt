@@ -12,11 +12,11 @@
         android:name="com.yb.livechatkt.ui.fragment.MineFragment"
         android:label="MineFragment" />
     <fragment
-        android:id="@+id/sessionFragment"
-        android:name="com.yb.livechatkt.ui.fragment.SessionFragment"
-        android:label="SessionFragment" />
-    <fragment
         android:id="@+id/contactsFragment"
         android:name="com.yb.livechatkt.ui.fragment.ContactsFragment"
         android:label="ContactsFragment" />
+    <fragment
+        android:id="@+id/sessionFragment"
+        android:name="com.yb.livechatkt.ui.fragment.SessionFragment"
+        android:label="SessionFragment" />
 </navigation>

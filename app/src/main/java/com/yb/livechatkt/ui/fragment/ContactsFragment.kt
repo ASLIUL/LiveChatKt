@@ -97,6 +97,9 @@ class ContactsFragment : BaseFragment() {
         viewModel.wyLoginMonitor.observe(viewLifecycleOwner, Observer {
             wyLoginFailed(it)
         })
+        viewModel.isOffLineLiveData.observe(requireActivity(),{
+            if (it){offLine();activity?.finish()}
+        })
     }
 
 }

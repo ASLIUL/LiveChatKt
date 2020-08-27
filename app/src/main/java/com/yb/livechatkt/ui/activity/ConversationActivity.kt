@@ -12,6 +12,8 @@ import com.netease.nimlib.sdk.NIMClient
 import com.netease.nimlib.sdk.msg.MsgService
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum
 import com.netease.nimlib.sdk.msg.model.IMMessage
+import com.netease.nimlib.sdk.msg.model.RecentContact
+import com.netease.nimlib.sdk.uinfo.UserService
 import com.yb.livechatkt.R
 import com.yb.livechatkt.bean.HyGroup
 import com.yb.livechatkt.bean.RowX
@@ -76,16 +78,16 @@ class ConversationActivity:BaseAppActivity(),ConversationInputPanelInterface {
                 binding.liveTitleBar.centerTitle.text =
                     resources.getString(R.string.hy_service_person)
                 binding.liveTitleBar.rightType = 0
-                val session = intent.getSerializableExtra(NetConstant.CONVERSATION_DATA) as Session
-                acccid = session.accid
+                val session = intent.getSerializableExtra(NetConstant.CONVERSATION_DATA) as RecentContact
+                acccid = session.contactId
                 viewModel.judgeServiceIsOnLine(acccid)
                 viewModel.getHistoryMessage(acccid, sessionTypeEnum)
             }
             NetConstant.SESSION_NORMAL_USER_SESSION -> {
                 sessionTypeEnum = SessionTypeEnum.P2P
-                val session = intent.getSerializableExtra(NetConstant.CONVERSATION_DATA) as Session
-                binding.liveTitleBar.centerTitle.text = session.name + ""
-                acccid = session.accid
+                val recentContact = intent.getSerializableExtra(NetConstant.CONVERSATION_DATA) as RecentContact
+                binding.liveTitleBar.centerTitle.text = NIMClient.getService(UserService::class.java).getUserInfo(recentContact.contactId)?.name
+                acccid = recentContact.contactId
                 viewModel.getHistoryMessage(acccid, sessionTypeEnum)
             }
         }
@@ -140,6 +142,9 @@ class ConversationActivity:BaseAppActivity(),ConversationInputPanelInterface {
                 messageMap[it.uuid] = it
             }
             updateShowMessage()
+        })
+        viewModel.isOffLineLiveData.observe(this,{
+            if (it) {offLine();finish()}
         })
     }
 

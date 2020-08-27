@@ -72,7 +72,9 @@ class HomeMainActivity : BaseAppActivity() {
             }
         })
         viewModel.isMonitorWyLogin(true)
-
+        viewModel.isOffLineLiveData.observe(this,{
+            if (it) {offLine();finish()}
+        })
 
     }
 

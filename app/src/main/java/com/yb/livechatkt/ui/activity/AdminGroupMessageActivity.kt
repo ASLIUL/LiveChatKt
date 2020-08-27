@@ -106,6 +106,9 @@ class AdminGroupMessageActivity : BaseAppActivity(),GroupMSgInputPanelInterface 
         viewModel.fileUpLoadLiveData.observe(this, Observer {
             Log.d(TAG, "initListener: ${it.toString()}")
         })
+        viewModel.isOffLineLiveData.observe(this,{
+            if (it) {offLine();finish()}
+        })
     }
 
 

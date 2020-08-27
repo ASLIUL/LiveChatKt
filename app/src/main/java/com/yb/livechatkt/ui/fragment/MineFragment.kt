@@ -9,15 +9,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
+import com.netease.nimlib.sdk.NIMClient
+import com.netease.nimlib.sdk.auth.AuthService
 import com.yb.livechatkt.R
 import com.yb.livechatkt.databinding.FragmentMineBinding
-import com.yb.livechatkt.db.DBManager
 import com.yb.livechatkt.ui.activity.*
 import com.yb.livechatkt.util.NetConstant
-import com.yb.livechatkt.util.QRCodeUtil
 import com.yb.livechatkt.util.SaveUserData
 import com.yb.livechatkt.util.showToast
 import com.yb.livechatkt.vm.MineViewModel
+
 
 class MineFragment : BaseFragment() {
 
@@ -34,7 +35,7 @@ class MineFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_mine,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_mine, container, false)
         binding.data = viewModel
         binding.lifecycleOwner = this
         initView()
@@ -55,22 +56,22 @@ class MineFragment : BaseFragment() {
             wyLoginFailed(it)
         })
         binding.groupMessage.setOnClickListener{
-            startActivity(Intent(activity,ChooseGroupActivity::class.java))
+            startActivity(Intent(activity, ChooseGroupActivity::class.java))
         }
         binding.qrCode.setOnClickListener {
             val intent = Intent(activity, QRCodeActivity::class.java)
             startActivity(intent)
         }
         binding.updateHiMsg.setOnClickListener {
-            var intent = Intent(requireContext(),ServiceUpdateHiMessageActivity::class.java)
+            var intent = Intent(requireContext(), ServiceUpdateHiMessageActivity::class.java)
             startActivity(intent)
         }
         viewModel.isShowError.observe(viewLifecycleOwner, Observer {
             it.msg.showToast()
         })
         binding.findService.setOnClickListener {
-            var intent = Intent(requireContext(),ConversationActivity::class.java)
-            intent.putExtra(NetConstant.SESSION_TYPE,NetConstant.SESSION_SERVICE)
+            var intent = Intent(requireContext(), ConversationActivity::class.java)
+            intent.putExtra(NetConstant.SESSION_TYPE, NetConstant.SESSION_SERVICE)
             startActivity(intent)
         }
         binding.service.setOnClickListener {
@@ -78,26 +79,28 @@ class MineFragment : BaseFragment() {
         }
         viewModel.exitLiveData.observe(requireActivity(), Observer {
             if (it) {
+                NIMClient.getService(AuthService::class.java).logout()
                 SaveUserData.get().clearData()
                 val intent = Intent(activity, LoginActivity::class.java)
                 startActivity(intent)
+                activity?.finish()
             }
         })
         binding.relativeLayout.setOnClickListener {
             val intent = Intent(activity, UpdateUserDataActivity::class.java)
-            intent.putExtra("meData",viewModel.meDataLiveData.value)
+            intent.putExtra("meData", viewModel.meDataLiveData.value)
             startActivity(intent)
         }
         viewModel.userNotDataLiveData.observe(requireActivity(), Observer {
-            if (it){
+            if (it) {
                 resources.getString(R.string.please_complete_data).showToast()
-                startActivity(Intent(requireContext(),CompleteInformationActivity::class.java))
+                startActivity(Intent(requireContext(), CompleteInformationActivity::class.java))
             }
         })
 
         viewModel.updateStatusLiveData.observe(requireActivity(), Observer {
-            if (it){
-                status = if (status == "1")  "2" else "1"
+            if (it) {
+                status = if (status == "1") "2" else "1"
                 if (status == "1") {
                     binding.service.title.text = String.format(
                         resources.getString(R.string.service_status),
@@ -107,7 +110,7 @@ class MineFragment : BaseFragment() {
                         resources.getString(R.string.update_line_success),
                         resources.getString(R.string.down)
                     ).showToast()
-                }else {
+                } else {
                     binding.service.title.text = String.format(
                         resources.getString(R.string.service_status),
                         resources.getString(R.string.down)
@@ -117,13 +120,23 @@ class MineFragment : BaseFragment() {
                         resources.getString(R.string.up)
                     ).showToast()
                 }
-            }else{
+            } else {
                 if (status == "1")
-                    String.format(resources.getString(R.string.update_line_failed),resources.getString(R.string.up)).showToast()
+                    String.format(
+                        resources.getString(R.string.update_line_failed), resources.getString(
+                            R.string.up
+                        )
+                    ).showToast()
                 else
-                    String.format(resources.getString(R.string.update_line_failed),resources.getString(R.string.down)).showToast()
+                    String.format(
+                        resources.getString(R.string.update_line_failed), resources.getString(
+                            R.string.down
+                        )
+                    ).showToast()
             }
         })
-
+        viewModel.isOffLineLiveData.observe(requireActivity(),{
+            if (it){offLine();activity?.finish()}
+        })
     }
 }

@@ -57,6 +57,10 @@ class UpdateUserDataActivity : BaseAppActivity(),View.OnClickListener {
 
     override fun initListener() {
 
+        viewModel.isOffLineLiveData.observe(this,{
+            if (it) {offLine();finish()}
+        })
+
         binding.liveTitleBar.leftImg.setOnClickListener { finish() }
         binding.addressAction.setOnClickListener {
             dataType = 4
@@ -107,8 +111,9 @@ class UpdateUserDataActivity : BaseAppActivity(),View.OnClickListener {
                 .selectionMode(PictureConfig.SINGLE)
                 .isGif(false)
                 .isEnableCrop(true)
+                .enableCrop(true)
                 .withAspectRatio(1,1)
-                .cropImageWideHigh(1,1)
+                .cropImageWideHigh(400,400)
                 .freeStyleCropEnabled(true)
                 .scaleEnabled(true)
                 .queryMaxFileSize(10f)

@@ -86,5 +86,6 @@
     <string name="sum_subscribe">%1$s个关注</string>
     <string name="current_time_not_live">当前时间暂无直播</string>
     <string name="session">消息</string>
+    <string name="already_off_line">您已被挤下线，请稍后尝试重新登陆</string>
 
 </resources>

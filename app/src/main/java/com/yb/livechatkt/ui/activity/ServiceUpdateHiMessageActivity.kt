@@ -33,6 +33,9 @@ class ServiceUpdateHiMessageActivity : BaseAppActivity() {
             }
         })
         binding.liveTitleBar2.leftImg.setOnClickListener { finish() }
+        viewModel.isOffLineLiveData.observe(this,{
+            if (it) {offLine();finish()}
+        })
     }
 
     override fun getLayout(): Int = R.layout.activity_service_update_hi_msg_layout

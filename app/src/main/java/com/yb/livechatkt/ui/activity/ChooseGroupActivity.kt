@@ -54,6 +54,9 @@ class ChooseGroupActivity : BaseAppActivity() {
             intent.putExtra(NetConstant.ANIM_CHOOSER_GROUP_DATA,json)
             startActivity(intent)
         }
+        viewModel.isOffLineLiveData.observe(this,{
+            if (it) {offLine();finish()}
+        })
     }
 
     override fun getLayout(): Int {

@@ -87,7 +87,9 @@ class LiveFragment : BaseFragment() {
             }
 
         }
-
+        viewModel.isOffLineLiveData.observe(requireActivity(),{
+            if (it){offLine();activity?.finish()}
+        })
     }
 
 

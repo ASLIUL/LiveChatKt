@@ -1,9 +1,11 @@
 package com.yb.livechatkt.vm
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.netease.nimlib.sdk.NIMClient
+import com.netease.nimlib.sdk.RequestCallback
 import com.netease.nimlib.sdk.RequestCallbackWrapper
 import com.netease.nimlib.sdk.msg.MsgService
 import com.netease.nimlib.sdk.msg.model.RecentContact
@@ -14,40 +16,32 @@ import kotlinx.coroutines.launch
 
 class SessionViewModel(application: Application) : BaseViewModel(application) {
 
-    private val sessionDao = DBManager.getDBInstance().getSessionDao()
-    val historyMessageLiveData = MutableLiveData<List<RecentContact>>()
+    val historyRecentContactLiveData = MutableLiveData<List<RecentContact>>()
 
-    fun updateSession(session: Session){
-        viewModelScope.launch {
-            sessionDao.updateSession(session.accid, session.lastMsg, session.lastMsgTime)
-        }
-    }
-    fun insertSession(session: Session){
-        viewModelScope.launch {
-            var s = sessionDao.selectOneSessionByAccId(session.accid)
-            if (s!=null){
-                sessionDao.updateSession(session.accid,session.lastMsg,session.lastMsgTime)
-            }else{
-                sessionDao.insertOneSession(session)
-            }
-        }
-    }
-    fun deleteSession(session: Session){
-        viewModelScope.launch {
-            //sessionDao.deleteOneSession(accid)
-            sessionDao.deleteSession(session)
-        }
-    }
-    fun getHistorySession(){
+    //获取最近会话
+    fun getRecentContacts(){
         NIMClient.getService(MsgService::class.java).queryRecentContacts().setCallback(object :
-            RequestCallbackWrapper<List<RecentContact>>() {
-            override fun onResult(code: Int, result: List<RecentContact>?, exception: Throwable?) {
-                if (code == NetConstant.responseSuccessCode && !result.isNullOrEmpty()) {
-                    historyMessageLiveData.value = result
+            RequestCallback<List<RecentContact>> {
+            override fun onSuccess(param: List<RecentContact>?) {
+                if (!param.isNullOrEmpty()){
+                    historyRecentContactLiveData.value = param
                 }
+            }
+            override fun onFailed(code: Int) {
+                Log.d(TAG, "onFailed: $code")
+            }
+
+            override fun onException(exception: Throwable?) {
+                Log.d(TAG, "onException: ${exception?.message}")
             }
         })
     }
+    //删除最近会话
+    fun deleteRecentContacts(recentContact: RecentContact){
+        Log.d(TAG, "deleteRecentContacts: 测试删除")
+        NIMClient.getService(MsgService::class.java).deleteRecentContact2(recentContact.contactId,recentContact.sessionType)
+    }
+
 
 
 }

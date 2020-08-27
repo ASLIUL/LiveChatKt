@@ -264,7 +264,7 @@
                 android:layout_toRightOf="@id/address_title"
                 android:layout_marginStart="@dimen/limit_size_20dp"
                 android:gravity="end|center_vertical"
-                android:textSize="@dimen/font_size_18sp"
+                android:textSize="@dimen/font_size_12sp"
                 android:layout_marginEnd="@dimen/limit_size_50dp" />
 
             <ImageView

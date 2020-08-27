@@ -1,33 +1,30 @@
 package com.yb.livechatkt.vm
 
 import android.app.Application
-import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.netease.nimlib.sdk.NIMClient
+import com.netease.nimlib.sdk.Observer
 import com.netease.nimlib.sdk.StatusCode
-import com.netease.nimlib.sdk.auth.AuthService
 import com.netease.nimlib.sdk.auth.AuthServiceObserver
+import com.netease.nimlib.sdk.msg.MsgService
 import com.netease.nimlib.sdk.msg.MsgServiceObserve
 import com.netease.nimlib.sdk.msg.model.IMMessage
-import com.yb.livechatkt.LiveChatKtApplication
+import com.netease.nimlib.sdk.msg.model.RecentContact
 import com.yb.livechatkt.bean.ErrorMessageBean
-import com.yb.livechatkt.bean.GroupMessageBean
 import com.yb.livechatkt.bean.LiveEnum
 import com.yb.livechatkt.net.Result
 import com.yb.livechatkt.net.RetrofitUtil
 import com.yb.livechatkt.net.UserApi
 import com.yb.livechatkt.ui.activity.HomeMainActivity
-import com.yb.livechatkt.ui.activity.LoginActivity
 import com.yb.livechatkt.util.NetConstant
-import com.yb.livechatkt.util.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.log
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -38,6 +35,13 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     //登陆状态监听
     var wyLoginMonitor = MutableLiveData<Boolean>()
     var userNotDataLiveData = MutableLiveData<Boolean>()
+    //未读计数
+    val unReadNum = MutableLiveData<Int>()
+    //最近会话列表数据
+    val recentContactLiveData = MutableLiveData<List<RecentContact>>()
+    val deleteRecentContactLiveData = MutableLiveData<RecentContact>()
+    val isOffLineLiveData = MutableLiveData<Boolean>()
+
 
 
     init {
@@ -45,8 +49,17 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         isStartMonitorMessage.value = true
         wyLoginMonitor.value = true
         NIMClient.getService(MsgServiceObserve::class.java).observeReceiveMessage({
-                receiveMessageLiveData.value = it
-            }, isStartMonitorMessage.value!!)
+            receiveMessageLiveData.value = it
+        }, isStartMonitorMessage.value!!)
+
+        unReadNum.value = NIMClient.getService(MsgService::class.java).totalUnreadCount
+        NIMClient.getService(MsgServiceObserve::class.java).observeRecentContact({
+            recentContactLiveData.value = it
+        }, true)
+        NIMClient.getService(MsgServiceObserve::class.java).observeRecentContactDeleted({
+            deleteRecentContactLiveData.value = it
+        },true)
+        isOffLineLiveData.value = false
     }
 
     val TAG = this.javaClass.simpleName
@@ -64,17 +77,24 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     fun dismissLoading(){
         isShowLoading.value = false;
     }
-    fun showError(error:ErrorMessageBean){
+    fun showError(error: ErrorMessageBean){
         isShowError.value = error
     }
     fun tokenError(){
         tokenFailed.value = true
     }
-    fun isMonitorWyLogin(isObserve:Boolean){
+    fun isMonitorWyLogin(isObserve: Boolean){
         NIMClient.getService(AuthServiceObserver::class.java).observeOnlineStatus({
+            //if (it.wontAutoLogin()) isOffLineLiveData.value = true
             if (it == StatusCode.LOGINED) wyLoginMonitor.value = true
-            if (it == StatusCode.UNLOGIN || it == StatusCode.PWD_ERROR || it == StatusCode.VER_ERROR) wyLoginMonitor.value = false
+            if (it == StatusCode.UNLOGIN || it == StatusCode.PWD_ERROR || it == StatusCode.VER_ERROR) wyLoginMonitor.value =
+                false
         }, isObserve)
+    }
+    fun monitorRecentContacts(isStart: Boolean){
+        NIMClient.getService(MsgServiceObserve::class.java).observeRecentContact({
+                recentContactLiveData.value = it
+            }, isStart)
     }
 
 
@@ -109,12 +129,17 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
                         userNotDataLiveData.value = true
                     }
                     else -> {
-                        showError(ErrorMessageBean(result?.code!!,result?.msg!!))
+                        showError(ErrorMessageBean(result?.code!!, result?.msg!!))
                     }
                 }
             } catch (e: Throwable) {//接口请求失败
                 e.printStackTrace()
-                showError(ErrorMessageBean(NetConstant.responseErrorCode,NetConstant.reponseErrorMsg))
+                showError(
+                    ErrorMessageBean(
+                        NetConstant.responseErrorCode,
+                        NetConstant.reponseErrorMsg
+                    )
+                )
             } finally {//请求结束
                 dismissLoading()
             }
@@ -122,7 +147,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun launchAny(
-        block : suspend CoroutineScope.() -> Result<Any>,
+        block: suspend CoroutineScope.() -> Result<Any>,
         liveData: MutableLiveData<Boolean>
     ){
         viewModelScope.launch {
@@ -138,9 +163,9 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
                     tokenError()
                 }else{
                     liveData.value = false
-                    showError(ErrorMessageBean(result!!.code,result!!.msg))
+                    showError(ErrorMessageBean(result!!.code, result!!.msg))
                 }
-            }catch (e:Throwable){
+            }catch (e: Throwable){
                 liveData.value = false
             }finally {
                 dismissLoading()
@@ -148,11 +173,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
     fun launchHashMap(
-        block : suspend CoroutineScope.() -> Result<Any>,
-        liveData: MutableLiveData<MutableMap<String,LiveEnum>>,
-        key:String
+        block: suspend CoroutineScope.() -> Result<Any>,
+        liveData: MutableLiveData<MutableMap<String, LiveEnum>>,
+        key: String
     ){
-        var hashMap:MutableMap<String,LiveEnum> = HashMap()
+        var hashMap:MutableMap<String, LiveEnum> = HashMap()
         viewModelScope.launch {
             try {
                 var result:Result<Any>? = null
@@ -168,7 +193,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
                     liveData.postValue(hashMap)
                     Log.d(TAG, "L launchHashMap: ${liveData.value.toString()}")
                 }
-            }catch (e:Throwable){
+            }catch (e: Throwable){
                 hashMap[key] = LiveEnum.error
                 liveData.postValue(hashMap)
                 Log.d(TAG, "E launchHashMap: ${liveData.value.toString()}")
@@ -176,9 +201,13 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
-    fun launchKey(block: suspend CoroutineScope.() -> Result<Any>, liveData: MutableLiveData<MutableMap<String, LiveEnum>>, key: String){
+    fun launchKey(
+        block: suspend CoroutineScope.() -> Result<Any>,
+        liveData: MutableLiveData<MutableMap<String, LiveEnum>>,
+        key: String
+    ){
 
-        var hashMap:MutableMap<String,LiveEnum> = HashMap()
+        var hashMap:MutableMap<String, LiveEnum> = HashMap()
         hashMap[key] = LiveEnum.sending
         viewModelScope.launch {
             try {
@@ -195,7 +224,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
                     hashMap[key]= LiveEnum.error
                 }
                 liveData.postValue(hashMap)
-            }catch (e:Throwable){
+            }catch (e: Throwable){
             }
         }
 

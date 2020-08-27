@@ -127,6 +127,9 @@ class CompleteInformationActivity : BaseAppActivity() ,View.OnClickListener {
                 resources.getString(R.string.save_failed).showToast()
             }
         })
+        viewModel.isOffLineLiveData.observe(this,{
+            if (it) {offLine();finish()}
+        })
     }
 
     private fun showUpdateUserDataDialog(){

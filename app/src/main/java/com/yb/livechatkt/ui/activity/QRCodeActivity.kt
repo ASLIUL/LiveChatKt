@@ -27,6 +27,7 @@ class QRCodeActivity : BaseAppActivity() {
         binding.save.setOnClickListener {
             lifecycleScope.launch { savePhoto(this@QRCodeActivity,bitmap!!) }
         }
+
     }
 
     override fun getLayout(): Int = R.layout.activity_qr_code_layout

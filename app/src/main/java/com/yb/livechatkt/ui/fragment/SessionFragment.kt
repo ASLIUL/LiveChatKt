@@ -16,12 +16,15 @@ import com.netease.nimlib.sdk.NIMClient
 import com.netease.nimlib.sdk.msg.MsgService
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum
+import com.netease.nimlib.sdk.msg.model.RecentContact
 import com.yb.livechatkt.R
+import com.yb.livechatkt.bean.HyGroup
 import com.yb.livechatkt.bean.Session
 import com.yb.livechatkt.databinding.FragmentSessionBinding
 import com.yb.livechatkt.db.DBManager
 import com.yb.livechatkt.net.LiveChatUrl
 import com.yb.livechatkt.ui.activity.ConversationActivity
+import com.yb.livechatkt.ui.adapter.RecentContactsRecyclerAdapter
 import com.yb.livechatkt.ui.adapter.SessionRecyclerAdapter
 import com.yb.livechatkt.util.NetConstant
 import com.yb.livechatkt.util.SaveUserData
@@ -32,11 +35,10 @@ class SessionFragment : BaseFragment() {
 
     val viewModel by viewModels<SessionViewModel>()
     lateinit var binding:FragmentSessionBinding
-    val sessionDao = DBManager.getDBInstance().getSessionDao()
-    private var sessionAdapter:SessionRecyclerAdapter? = null
-    private var sessionList:MutableList<Session> = ArrayList()
-    private var sessionMap:MutableMap<String, Session>  = HashMap()
     private val TAG = "SessionFragment"
+    private val recentContactMap : MutableMap<String, RecentContact> = HashMap()
+    private val recentContacts:MutableList<RecentContact> = ArrayList()
+    private var recentContactsAdapter : RecentContactsRecyclerAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,167 +51,81 @@ class SessionFragment : BaseFragment() {
     }
     private fun initView(){
 
-        var manager = LinearLayoutManager(requireContext())
+        viewModel.getRecentContacts()
+        val manager = LinearLayoutManager(requireContext())
         manager.orientation = RecyclerView.VERTICAL
         binding.sessionRecycler.layoutManager = manager
-        sessionAdapter = SessionRecyclerAdapter(requireContext(), sessionList)
-        binding.sessionRecycler.adapter = sessionAdapter
-
-        viewModel.tokenFailed.observe(viewLifecycleOwner, Observer {
-            tokenFailed(it)
-        })
-        viewModel.wyLoginMonitor.observe(viewLifecycleOwner, Observer {
-            wyLoginFailed(it)
-        })
-        viewModel.receiveMessageLiveData.observe(requireActivity(), Observer {
-            if (it.isNotEmpty()) {
-                it.forEach { im ->
-                    val messageMap = im.remoteExtension
-                    if (sessionMap.containsKey(im.sessionId)) {
-                        var session = sessionMap[im.sessionId]
-                        session?.lastMsg = getConnect(im)
-                        session?.lastMsgTime = im.time
-                        session?.unRead = 1
-                        val direct = if (im.direct == MsgDirectionEnum.In) 1 else 2
-                        var  name = ""
-                        if (direct == 2) {
-                            name = try {
-                                if (messageMap.containsKey("toName")) {
-                                    messageMap["toName"].toString()
-                                } else {
-                                    im.sessionId
-                                }
-                            }catch (e:java.lang.Exception){
-                                im.sessionId
-                            }
-                        }else if (direct == 1){
-                            name = im.fromNick
-                        }
-                        session?.name = name
-                        viewModel.updateSession(session!!)
-                    } else {
-                        var sessionType = if (im.sessionType == SessionTypeEnum.P2P) { 1 } else { 2 }
-                        val direct = if (im.direct == MsgDirectionEnum.In) 1 else 2
-                        var  name = ""
-                        if (direct == 2) {
-                            name = try {
-                                if (messageMap.containsKey("toName")) {
-                                    messageMap["toName"].toString()
-                                } else {
-                                    im.sessionId
-                                }
-                            }catch (e:java.lang.Exception){
-                                im.sessionId
-                            }
-                        }else if (direct == 1){
-                            name = im.fromNick
-                        }
-                        var session = Session(
-                            im.sessionId,
-                            name,
-                            getConnect(im),
-                            im.time,
-                            1,
-                            LiveChatUrl.headerBaseUrl + im.sessionId,
-                            sessionType
-                        )
-                        viewModel.insertSession(session)
-                    }
+        recentContactsAdapter = RecentContactsRecyclerAdapter(requireContext(),recentContacts)
+        binding.sessionRecycler.adapter = recentContactsAdapter
+        viewModel.recentContactLiveData.observe(requireActivity(), {
+            it.forEach{recentContact ->
+                if (recentContact.fromAccount == SaveUserData.get().accId){
+                    return@forEach
                 }
-                //updateShowData()
+                recentContactMap[recentContact.contactId] = recentContact
             }
+            updateShowMessage()
         })
-
-        sessionAdapter?.onItemClickListener = object : SessionRecyclerAdapter.OnItemClickListener{
-            override fun itemClickListener(view: View, session: Session, position: Int) {
-                if (session.sessionType == 1){
-                    if (SaveUserData.get().role < 3){
-                        val intent = Intent(requireContext(), ConversationActivity::class.java)
-                        intent.putExtra(
-                            NetConstant.SESSION_TYPE,
-                            NetConstant.SESSION_HAS_SERVICE_SESSION
-                        )
-                        intent.putExtra(NetConstant.CONVERSATION_DATA, session)
-                        startActivity(intent)
+        viewModel.historyRecentContactLiveData.observe(requireActivity(), {
+            recentContactMap.clear()
+            it.forEach { recentContact ->
+                recentContactMap[recentContact.contactId] = recentContact
+            }
+            updateShowMessage()
+        })
+        viewModel.deleteRecentContactLiveData.observe(requireActivity(), Observer {
+            recentContactMap.remove(it.contactId)
+            updateShowMessage()
+        })
+        recentContactsAdapter?.onItemLongClickListener = object : RecentContactsRecyclerAdapter.OnItemLongClickListener{
+            override fun itemLongClickListener(
+                view: View,
+                recentContact: RecentContact,
+                position: Int
+            ) {
+                showMenu(view,recentContact)
+            }
+        }
+        recentContactsAdapter?.onItemClickListener = object :RecentContactsRecyclerAdapter.OnItemClickListener{
+            override fun itemClickListener(
+                view: View,
+                recentContact: RecentContact,
+                position: Int
+            ) {
+                val intent = Intent(activity,ConversationActivity::class.java)
+                if (recentContact.sessionType == SessionTypeEnum.Team){
+                    intent.putExtra(NetConstant.SESSION_TYPE,NetConstant.SESSION_TEAM)
+                    intent.putExtra(NetConstant.CONVERSATION_DATA,HyGroup(1,recentContact.contactId.toLong(),resources.getString(R.string.hy_service)))
+                }else if (recentContact.sessionType == SessionTypeEnum.P2P){
+                    if (SaveUserData.get().role>2){
+                        intent.putExtra(NetConstant.SESSION_TYPE,NetConstant.SESSION_HAS_SERVICE_SESSION)
+                        intent.putExtra(NetConstant.CONVERSATION_DATA,recentContact)
                     }else{
-                        val intent = Intent(requireContext(), ConversationActivity::class.java)
-                        intent.putExtra(
-                            NetConstant.SESSION_TYPE,
-                            NetConstant.SESSION_NORMAL_USER_SESSION
-                        )
-                        intent.putExtra(NetConstant.CONVERSATION_DATA, session)
-                        startActivity(intent)
+                        intent.putExtra(NetConstant.SESSION_TYPE,NetConstant.SESSION_NORMAL_USER_SESSION)
+                        intent.putExtra(NetConstant.CONVERSATION_DATA,recentContact)
                     }
                 }
+                startActivity(intent)
             }
         }
-        /*
-        sessionAdapter?.onItemLongClickListener = object : SessionRecyclerAdapter.OnItemLongClickListener{
-            override fun itemLongClickListener(view: View, session: Session, position: Int) {
-                showMenu(view, session)
-            }
-        }
-        */
-
-        viewModel.historyMessageLiveData.observe(requireActivity(), Observer {
-            try {
-                it.forEach {
-                    val map: Map<String, Any>? = it.extension
-                    Log.d(TAG, "initView: ${getConnect(it)}")
-                    if (sessionMap.containsKey(it.contactId)) {
-                        var session = sessionMap[it.contactId]
-                        session?.lastMsgTime = it.time
-                        session?.lastMsg = getConnect(it)
-                        try {
-                            if (map?.containsKey("name")!!) session?.name =
-                                map["name"].toString() else session?.name = it.contactId
-                        }catch (e:Exception){
-                            session?.name = it.contactId
-                        }
-                        viewModel.updateSession(session!!)
-                    } else {
-                        var name = try {
-                            if (map?.containsKey("name")!!) map["name"].toString() else it.fromNick
-                        }catch (e:Exception){
-                            it.fromNick
-                        }
-
-                        var sessionType = 1
-                        if (it.sessionType == SessionTypeEnum.P2P) sessionType =
-                            1 else sessionType = 2
-                        var session = Session(
-                            it.contactId,
-                            name,
-                            getConnect(it),
-                            it.time,
-                            1,
-                            LiveChatUrl.headerBaseUrl + it.contactId,
-                            sessionType
-                        )
-                        viewModel.insertSession(session)
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
+        viewModel.isOffLineLiveData.observe(requireActivity(),{
+            if (it){offLine();activity?.finish()}
         })
-        viewModel.getHistorySession()
 
     }
-    private fun updateShowData(){
-        sessionList.clear()
-        sessionMap.forEach{
-            sessionList.add(it.value)
+    private fun updateShowMessage(){
+        recentContacts.clear()
+        recentContactMap.forEach {
+            recentContacts.add(it.value)
         }
-        sessionAdapter?.notifyDataSetChanged()
+        recentContactsAdapter?.notifyDataSetChanged()
     }
 
-    private fun showMenu(view: View, session: Session){
+    private fun showMenu(view: View, recentContact: RecentContact){
         var popupMenu = PopupMenu(requireContext(), view)
         popupMenu.menuInflater.inflate(R.menu.session_item_action, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener {
-            viewModel.deleteSession(session)
+            viewModel.deleteRecentContacts(recentContact)
             true
         }
         popupMenu.show()
@@ -221,15 +137,4 @@ class SessionFragment : BaseFragment() {
         NIMClient.getService(MsgService::class.java).setChattingAccount(MsgService.MSG_CHATTING_ACCOUNT_ALL, SessionTypeEnum.None)
     }
 
-    override fun onStart() {
-        super.onStart()
-        sessionDao.getAllDataLiveData().observe(requireActivity(), { list ->
-            if (list.isNotEmpty()) {
-                list.forEach {
-                    sessionMap[it.accid] = it
-                }
-                updateShowData()
-            }
-        })
-    }
 }

@@ -10,10 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.yb.livechatkt.LiveChatKtApplication.Companion.context
 import com.yb.livechatkt.R
-import com.yb.livechatkt.bean.HomeLiveBean
 import com.yb.livechatkt.bean.Row
-import com.yb.livechatkt.bean.TextMessage
-import com.yb.livechatkt.databinding.AdapterHomeLiveItemLayoutBinding
 
 class HomeLiveRecyclerAdapter(context: Context,val dataList : List<Row>) : RecyclerView.Adapter<HomeLiveRecyclerAdapter.HomeLiveViewHolder>() {
 

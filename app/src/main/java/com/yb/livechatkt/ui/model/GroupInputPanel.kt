@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
+import android.os.Build
 import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
@@ -12,15 +14,24 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.bumptech.glide.Glide
 import com.luck.picture.lib.PictureSelector
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.listener.OnResultCallbackListener
 import com.netease.nimlib.sdk.media.record.AudioRecorder
 import com.netease.nimlib.sdk.media.record.IAudioRecordCallback
 import com.netease.nimlib.sdk.media.record.RecordType
 import com.permissionx.guolindev.PermissionX
 import com.yb.livechatkt.R
+import com.yb.livechatkt.bean.ActionType
 import com.yb.livechatkt.bean.GroupMessageBean
+import com.yb.livechatkt.bean.PlugBean
+import com.yb.livechatkt.ui.adapter.PlugRecyclerAdapter
 import com.yb.livechatkt.util.showToast
+import com.yb.livechatkt.util.uriToFileQ
 import java.io.File
 
 class GroupInputPanel(private var activity: AppCompatActivity, rootView: View, private var groupMSgInputPanelInterface: GroupMSgInputPanelInterface) : IAudioRecordCallback {
@@ -29,12 +40,16 @@ class GroupInputPanel(private var activity: AppCompatActivity, rootView: View, p
     var recordTips: TextView = rootView.findViewById(R.id.record_tips)
     var recordLine: LinearLayout = rootView.findViewById(R.id.recording_line)
     var moreAction: ImageView = rootView.findViewById(R.id.more_action)
-    var ActionRecycler: RecyclerView = rootView.findViewById(R.id.action_bar)
+    var moreActionLine: LinearLayout = rootView.findViewById(R.id.more_action_line)
+    var actionRecycler: RecyclerView = rootView.findViewById(R.id.action_bar)
     var msgConnect:EditText = rootView.findViewById(R.id.connect)
     var send:TextView = rootView.findViewById(R.id.send)
     val touchRecord:TextView = rootView.findViewById(R.id.touch_recording)
     val voice:ImageView = rootView.findViewById(R.id.voice)
     private val TAG = "InputPanel"
+
+    var plugRecyclerAdapter : PlugRecyclerAdapter? = null
+
 
     //1 图片 2语音，3视频
     private var messageType:Int = 1
@@ -46,6 +61,7 @@ class GroupInputPanel(private var activity: AppCompatActivity, rootView: View, p
     private var isCancelRecord:Boolean = true
 
     var audioRecorder: AudioRecorder? = null
+
     //录音最长时间
     val maxTime:Int = 120
 
@@ -54,6 +70,23 @@ class GroupInputPanel(private var activity: AppCompatActivity, rootView: View, p
     private val cameraCode:Int = 100004
 
     init {
+
+        val plugAlbum = PlugBean(ActionType.ALUBM)
+        //val plugShot = PlugBean(ActionType.SHOT)
+        val plugVideo = PlugBean(ActionType.VIDEO)
+        val plugList:MutableList<PlugBean> = ArrayList()
+        plugList.add(plugAlbum)
+        //plugList.add(plugShot)
+        plugList.add(plugVideo)
+
+        plugRecyclerAdapter = PlugRecyclerAdapter(context = activity,plugList)
+        var gridLayoutManager = StaggeredGridLayoutManager(4,LinearLayout.VERTICAL)
+        actionRecycler.layoutManager = gridLayoutManager
+        actionRecycler.adapter = plugRecyclerAdapter
+
+
+
+
         send.setOnClickListener {
             sendTextMessage()
         }
@@ -80,7 +113,80 @@ class GroupInputPanel(private var activity: AppCompatActivity, rootView: View, p
                 send.visibility = View.GONE
             }
         }
+        moreAction.setOnClickListener {
+            if (groupMSgInputPanelInterface.getKeyBoardIsShow()){
+                groupMSgInputPanelInterface.hideKeyBoard()
+            }
+            if (moreActionLine.visibility == View.VISIBLE) moreActionLine.visibility = View.GONE else moreActionLine.visibility = View.VISIBLE
+        }
+
+        plugRecyclerAdapter?.onItemClickListener = object : PlugRecyclerAdapter.OnItemClickListener{
+            override fun itemClick(view: View, plugBean: PlugBean, position: Int) {
+                when(plugBean.action){
+                    ActionType.ALUBM ->{
+                        messageType = 1
+                        PictureSelector
+                            .create(activity)
+                            .openGallery(PictureMimeType.ofImage())
+                            .selectionMode(PictureConfig.SINGLE)
+                            .isGif(false)
+                            .cropImageWideHigh(1,1)
+                            .freeStyleCropEnabled(true)
+                            .scaleEnabled(true)
+                            .queryMaxFileSize(10f)
+                            .isReturnEmpty(true)
+                            .imageEngine(PictureSelectEngine())
+                            .forResult(object : OnResultCallbackListener<LocalMedia> {
+                                override fun onResult(result: MutableList<LocalMedia>?) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                        createFileMessage(uriToFileQ(activity, Uri.parse(result?.get(0)!!.path))?.absolutePath!!)
+                                    }else{
+                                        createFileMessage(result?.get(0)!!.path)
+                                    }
+                                }
+
+                                override fun onCancel() {
+
+                                }
+
+                            })
+
+                    }
+                    ActionType.VIDEO ->{
+                        messageType = 3
+                        PictureSelector
+                            .create(activity)
+                            .openGallery(PictureMimeType.ofVideo())
+                            .selectionMode(PictureConfig.SINGLE)
+                            .isGif(false)
+                            .cropImageWideHigh(1,1)
+                            .freeStyleCropEnabled(true)
+                            .scaleEnabled(true)
+                            .queryMaxFileSize(10f)
+                            .isReturnEmpty(true)
+                            .imageEngine(PictureSelectEngine())
+                            .forResult(object : OnResultCallbackListener<LocalMedia> {
+                                override fun onResult(result: MutableList<LocalMedia>?) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                        createFileMessage(uriToFileQ(activity, Uri.parse(result?.get(0)!!.path))?.absolutePath!!)
+                                    }else{
+                                        createFileMessage(result?.get(0)!!.path)
+                                    }
+                                }
+
+                                override fun onCancel() {
+
+                                }
+
+                            })
+
+                    }
+                    }
+                }
+            }
+
     }
+
 
     private fun sendTextMessage(){
         var bean = GroupMessageBean.createTextMessage(msgConnect.text.toString(),groupMSgInputPanelInterface.getToAccIds())
@@ -103,20 +209,17 @@ class GroupInputPanel(private var activity: AppCompatActivity, rootView: View, p
         mediaDatas.forEach {
             resultDatas.add(it.path)
         }
-        createFileMessage(resultDatas)
+        createFileMessage(resultDatas[0])
     }
 
-    private fun createFileMessage(fileDatas:List<String>){
+    private fun createFileMessage(fileDatas:String){
         when(messageType){
             1->{
-                val imageMessage = GroupMessageBean.createPicMessage(File(fileDatas[0]),"",groupMSgInputPanelInterface.getToAccIds())
+                val imageMessage = GroupMessageBean.createPicMessage(File(fileDatas),"",groupMSgInputPanelInterface.getToAccIds())
                 groupMSgInputPanelInterface.sendImageMessage(imageMessage)
             }
-            2 ->{
-
-            }
             3 ->{
-                val videoMessage = GroupMessageBean.createVideoMessage(File(fileDatas[0]),"",groupMSgInputPanelInterface.getToAccIds())
+                val videoMessage = GroupMessageBean.createVideoMessage(File(fileDatas),"",groupMSgInputPanelInterface.getToAccIds())
                 groupMSgInputPanelInterface.sendVideoMessage(videoMessage)
             }
         }
@@ -230,6 +333,7 @@ class GroupInputPanel(private var activity: AppCompatActivity, rootView: View, p
     override fun onRecordFail() {
         if (startRecording){
             activity.resources.getString(R.string.record_error).showToast()
+            stopRecord()
             stopRecord()
         }
     }

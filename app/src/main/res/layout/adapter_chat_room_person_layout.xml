@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:layout_margin="@dimen/limit_size_5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.yb.livechatkt.view.NiceImageView
+        android:id="@+id/header"
+        android:layout_width="@dimen/limit_size_30dp"
+        android:layout_height="@dimen/limit_size_30dp"
+        app:corner_radius="@dimen/limit_size_20dp"
+        android:scaleType="centerCrop"
+        tools:src="@color/theme_bg_color"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/header"
+        android:layout_alignLeft="@id/header"
+        android:layout_alignRight="@id/header"
+        android:textSize="@dimen/font_size_9sp"
+        android:gravity="center"
+        />
+
+
+</RelativeLayout>

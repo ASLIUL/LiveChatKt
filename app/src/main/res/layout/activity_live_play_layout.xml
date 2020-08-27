@@ -9,7 +9,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <com.yb.livechatkt.view.NormalGSYVideoPlayer
             android:id="@+id/normalGSYVideoPlayer"
@@ -24,11 +25,13 @@
 
         <RelativeLayout
             android:id="@+id/relativeLayout2"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/limit_size_40dp"
             android:background="@drawable/live_say_sth_bg"
             android:layout_marginStart="@dimen/limit_size_20dp"
             android:layout_marginEnd="@dimen/limit_size_20dp"
+            app:layout_constraintHorizontal_bias="0.05"
+            android:paddingRight="@dimen/limit_size_10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,7 +44,7 @@
                 android:layout_width="@dimen/limit_size_30dp"
                 android:layout_height="@dimen/limit_size_30dp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:layout_marginStart="@dimen/limit_size_10dp"
                 android:src="@mipmap/group_header" />
 
             <TextView
@@ -71,19 +74,24 @@
                 android:layout_width="@dimen/limit_size_60dp"
                 android:layout_height="@dimen/limit_size_30dp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/limit_size_40dp"
+                android:layout_marginStart="@dimen/limit_size_30dp"
                 android:layout_toRightOf="@id/sub_num"
                 android:background="@drawable/subscribe_tv_bg"
                 android:gravity="center"
                 android:text="@string/already_subscribe" />
-
-            <RelativeLayout
-                android:id="@+id/watch_person"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/limit_size_50dp"
-                android:layout_toRightOf="@id/subscribe" />
         </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/watch_person"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/limit_size_40dp"
+            android:layout_marginStart="@dimen/limit_size_20dp"
+            android:layout_marginEnd="@dimen/limit_size_20dp"
+            app:layout_constraintStart_toEndOf="@id/relativeLayout2"
+            app:layout_constraintBottom_toBottomOf="@+id/relativeLayout2"
+            app:layout_constraintTop_toTopOf="@+id/relativeLayout2"
+            app:layout_constraintEnd_toEndOf="parent"
+             />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/message_recycler"
@@ -118,6 +126,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="@id/guideline2"
             android:layout_marginBottom="@dimen/limit_size_20dp"
+            android:layout_marginStart="@dimen/limit_size_10dp"
             tools:ignore="MissingConstraints">
 
             <TextView
@@ -126,6 +135,7 @@
                 android:layout_height="@dimen/limit_size_30dp"
                 android:layout_gravity="center"
                 android:clickable="true"
+                android:enabled="true"
                 android:hint="@string/say_something"
                 android:gravity="center_vertical"
                 android:textColor="@color/white"
@@ -145,6 +155,7 @@
                 />
 
             <ImageView
+                android:id="@+id/close"
                 android:layout_width="@dimen/limit_size_25dp"
                 android:layout_height="@dimen/limit_size_25dp"
                 android:src="@drawable/ic_close_white"

@@ -14,6 +14,12 @@ interface GroupMSgInputPanelInterface {
 
     fun getToAccIds():String
 
+    fun getKeyBoardIsShow():Boolean
+
+    fun hideKeyBoard()
+
+    fun ShowKeyBoard()
+
 
 
 }

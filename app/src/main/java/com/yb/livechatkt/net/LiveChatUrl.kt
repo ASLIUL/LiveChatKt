@@ -2,9 +2,9 @@ package com.yb.livechatkt.net
 
 object LiveChatUrl {
 
-    const val baseUrl = "http://192.168.0.103:9000"
+    //const val baseUrl = "http://192.168.0.103:9000"
 
-    //public static final String baseUrl = "http://www.moo9995.com:9000/";
+    const val baseUrl = "http://www.moo9995.com:9000";
     const val imgBaseUrl = "http://192.168.0.103:8080"
 
     //头像的baseUrl
@@ -57,6 +57,12 @@ object LiveChatUrl {
 
     //根据liveId获取直播间详细信息
     const val getLiveRoomDataByLiveId = "/home/search/searchLiveById"
+
+    //超管发信息上传文件
+    const val adminUploadFile = "/superadmin/uploadMessageFile"
+
+    //j检查当前客服是否在线
+    const val judgeServiceIsOLine = "/service/user/judgeServiceIsOnline"
 
 
 }

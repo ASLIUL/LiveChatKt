@@ -21,4 +21,6 @@ interface FriendsDao {
 
     @Query("DELETE FROM friends")
     suspend fun deleteAllData()
+
+
 }

@@ -68,7 +68,7 @@ class CompleteInformationActivity : BaseAppActivity() ,View.OnClickListener {
             hashMap[NetConstant.PROVINCE_ID] = it[NetConstant.PROVINCE_ID].toString()
             hashMap[NetConstant.CITY_ID] = it[NetConstant.CITY_ID].toString()
             hashMap[NetConstant.COUNTY_ID] = it[NetConstant.COUNTY_ID].toString()
-            hashMap["address"] = address
+            hashMap["address"] = address.replace("-"," ")
         })
 
         binding.headerAction.setOnClickListener {
@@ -77,7 +77,9 @@ class CompleteInformationActivity : BaseAppActivity() ,View.OnClickListener {
                 .openGallery(PictureMimeType.ofImage())
                 .selectionMode(PictureConfig.SINGLE)
                 .isGif(false)
+                .isEnableCrop(true)
                 .cropImageWideHigh(1,1)
+                .withAspectRatio(1,1)
                 .freeStyleCropEnabled(true)
                 .scaleEnabled(true)
                 .queryMaxFileSize(10f)
@@ -120,6 +122,7 @@ class CompleteInformationActivity : BaseAppActivity() ,View.OnClickListener {
         viewModel.updateDataLiveData.observe(this, Observer {
             if (it){
                 resources.getString(R.string.save_success).showToast()
+                finish()
             }else{
                 resources.getString(R.string.save_failed).showToast()
             }

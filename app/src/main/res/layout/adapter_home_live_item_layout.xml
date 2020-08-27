@@ -15,21 +15,22 @@
 
         <ImageView
             android:id="@+id/videoCover"
-            android:layout_width="@dimen/limit_size_100dp"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/limit_size_100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.4" />
+            app:layout_constraintVertical_bias="0.2" />
 
         <TextView
             android:id="@+id/videoTitle"
-            android:layout_width="@dimen/limit_size_100dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:gravity="left|start"
+            android:paddingLeft="@dimen/limit_size_10dp"
             android:maxLines="2"
             android:text=""
             android:ellipsize="end"

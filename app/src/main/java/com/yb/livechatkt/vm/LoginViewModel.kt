@@ -25,7 +25,13 @@ public class LoginViewModel(application: Application) : BaseViewModel(applicatio
 
     var isLoginSuccess = MutableLiveData<Boolean>()
 
+    val isClick = MutableLiveData<Boolean>()
+    init {
+        isClick.value = true
+    }
+
     fun login(){
+        isClick.value = false
         if (TextUtils.isEmpty(phone.value)){
             NetConstant.PLEASRINPUTPHONE.showToast()
             return
@@ -47,6 +53,7 @@ public class LoginViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     fun wyLogin(accid:String,imToken:String){
+        Log.d(TAG, "wyLogin: 网易登陆")
         val info = LoginInfo(
             accid,
             imToken,
@@ -55,10 +62,12 @@ public class LoginViewModel(application: Application) : BaseViewModel(applicatio
         val loginInfoRequestCallback: RequestCallback<LoginInfo> =
             object : RequestCallback<LoginInfo> {
                 override fun onSuccess(param: LoginInfo) {
+                    Log.d(TAG, "onSuccess: $param")
                     isLoginSuccess.value = true
                 }
 
                 override fun onFailed(code: Int) {
+                    Log.d(TAG, "onFailed: $code")
                     isLoginSuccess.value = false
                 }
 

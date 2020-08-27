@@ -19,7 +19,7 @@ class LiveIconTitleActionBar(context: Context,attributeSet: AttributeSet) : Rela
     //value
     var titleValue:String? = ""
     var iconValue:Int = R.mipmap.ic_launcher
-    var dicVlaue:Int = R.drawable.ic_right_action_black
+    var dicVlaue:Int = R.drawable.ic_right_action_fine_black
 
 
     init {
@@ -27,7 +27,7 @@ class LiveIconTitleActionBar(context: Context,attributeSet: AttributeSet) : Rela
         val typedArray = context.obtainStyledAttributes(attributeSet,R.styleable.LiveIconTitleActionBar)
         titleValue = typedArray.getString(R.styleable.LiveIconTitleActionBar_title)
         iconValue = typedArray.getResourceId(R.styleable.LiveIconTitleActionBar_icon,R.mipmap.ic_launcher)
-        dicVlaue = typedArray.getResourceId(R.styleable.LiveIconTitleActionBar_dic,R.drawable.ic_right_action_black)
+        dicVlaue = typedArray.getResourceId(R.styleable.LiveIconTitleActionBar_dic,R.drawable.ic_right_action_fine_black)
         typedArray.recycle()
 
         val  view = View.inflate(context,R.layout.view_live_icon_title_bar_layout,this)

@@ -19,7 +19,7 @@
             android:id="@+id/liveTitleBar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/limit_size_50dp"
-            android:background="@color/theme_bg_color"
+            android:background="@color/session_title_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +27,7 @@
             app:layout_constraintVertical_bias="0"
             app:leftTitle="@string/contacts"
             app:leftType="1"
-            app:textColor="@color/white"
+            app:textColor="@color/black"
             tools:ignore="MissingConstraints" />
 
         <LinearLayout
@@ -43,9 +43,10 @@
             tools:ignore="MissingConstraints"
             android:orientation="horizontal">
 
-            <ImageView
+            <com.yb.livechatkt.view.NiceImageView
                 android:layout_width="@dimen/limit_size_40dp"
                 android:layout_height="@dimen/limit_size_40dp"
+                app:corner_radius="@dimen/limit_size_5dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="@dimen/limit_size_20dp"
                 android:src="@mipmap/group_header"

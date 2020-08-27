@@ -37,18 +37,16 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     var isStartMonitorMessage = MutableLiveData<Boolean>()
     //登陆状态监听
     var wyLoginMonitor = MutableLiveData<Boolean>()
+    var userNotDataLiveData = MutableLiveData<Boolean>()
 
 
     init {
+        userNotDataLiveData.value = false
         isStartMonitorMessage.value = true
         wyLoginMonitor.value = true
         NIMClient.getService(MsgServiceObserve::class.java).observeReceiveMessage({
                 receiveMessageLiveData.value = it
             }, isStartMonitorMessage.value!!)
-        NIMClient.getService(AuthServiceObserver::class.java).observeOnlineStatus({
-            if (it == StatusCode.LOGINED) wyLoginMonitor.value = true
-            if (it == StatusCode.UNLOGIN || it == StatusCode.PWD_ERROR || it == StatusCode.VER_ERROR) wyLoginMonitor.value = false
-        }, true)
     }
 
     val TAG = this.javaClass.simpleName
@@ -72,6 +70,12 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     fun tokenError(){
         tokenFailed.value = true
     }
+    fun isMonitorWyLogin(isObserve:Boolean){
+        NIMClient.getService(AuthServiceObserver::class.java).observeOnlineStatus({
+            if (it == StatusCode.LOGINED) wyLoginMonitor.value = true
+            if (it == StatusCode.UNLOGIN || it == StatusCode.PWD_ERROR || it == StatusCode.VER_ERROR) wyLoginMonitor.value = false
+        }, isObserve)
+    }
 
 
 
@@ -92,14 +96,24 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
                 withContext(Dispatchers.IO) {
                     result = block()
                 }
-                if (result!!.code == NetConstant.responseSuccessCode) {//请求成功
-                    liveData.value = result!!.data
-                } else if (result!!.code == NetConstant.responseTokenFailedCode) {
-                    tokenError()
-                }else{
-                    showError(ErrorMessageBean(result?.code!!,result?.msg!!))
+                Log.d(TAG, "launch: ${result!!.msg} \t ${result!!.code}")
+                when (result!!.code) {
+                    NetConstant.responseSuccessCode -> {//请求成功
+                        liveData.value = result!!.data
+                        Log.d(TAG, "launch: ${result!!.data}")
+                    }
+                    NetConstant.responseTokenFailedCode -> {
+                        tokenError()
+                    }
+                    NetConstant.responseNoDataCode -> {
+                        userNotDataLiveData.value = true
+                    }
+                    else -> {
+                        showError(ErrorMessageBean(result?.code!!,result?.msg!!))
+                    }
                 }
             } catch (e: Throwable) {//接口请求失败
+                e.printStackTrace()
                 showError(ErrorMessageBean(NetConstant.responseErrorCode,NetConstant.reponseErrorMsg))
             } finally {//请求结束
                 dismissLoading()
@@ -119,9 +133,12 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
                 }
                 if (result!!.code == NetConstant.responseSuccessCode){
                     liveData.value = true
-                }else {
+                }else if (result!!.code == NetConstant.responseTokenFailedCode){
                     liveData.value = false
-                    Log.d(TAG, "launchAny: ${result!!.code} \t ${result!!.msg}")
+                    tokenError()
+                }else{
+                    liveData.value = false
+                    showError(ErrorMessageBean(result!!.code,result!!.msg))
                 }
             }catch (e:Throwable){
                 liveData.value = false

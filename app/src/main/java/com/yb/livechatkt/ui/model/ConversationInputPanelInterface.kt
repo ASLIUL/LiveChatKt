@@ -15,6 +15,10 @@ interface ConversationInputPanelInterface {
 
     fun getToAccIds():String
 
+    fun getKeyBoardIsShow():Boolean
+
+    fun hideKeyBoard()
+
 
 
 }

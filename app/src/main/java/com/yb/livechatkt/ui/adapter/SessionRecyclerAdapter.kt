@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.yb.livechatkt.R
 import com.yb.livechatkt.bean.Session
+import com.yb.livechatkt.util.transToString
 
 class SessionRecyclerAdapter(val context: Context,val dataList:List<Session>) : RecyclerView.Adapter<SessionRecyclerAdapter.SessionViewHolder>() {
 
@@ -27,11 +28,30 @@ class SessionRecyclerAdapter(val context: Context,val dataList:List<Session>) : 
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         holder.name.text = dataList[position].name
-        holder.time.text = dataList[position].lastMsgTime.toString()
+        holder.time.text = transToString(dataList[position].lastMsgTime)
         holder.msg.text = dataList[position].lastMsg
         Glide.with(context).load(dataList[position].header).into(holder.header)
+        holder.itemView.setOnClickListener {
+            onItemClickListener?.itemClickListener(holder.itemView,dataList[position],position)
+        }
+        holder.itemView.setOnLongClickListener {
+            onItemLongClickListener?.itemLongClickListener(holder.itemView,dataList[position],position)
+            true
+        }
     }
 
     override fun getItemCount(): Int = dataList.size
+
+    interface OnItemClickListener{
+        fun itemClickListener(view:View,session: Session,position: Int)
+    }
+
+    interface OnItemLongClickListener{
+        fun itemLongClickListener(view: View,session: Session,position: Int)
+    }
+
+    var onItemClickListener:OnItemClickListener? = null
+
+    var onItemLongClickListener:OnItemLongClickListener? = null
 
 }

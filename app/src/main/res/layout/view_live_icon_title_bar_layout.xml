@@ -32,7 +32,7 @@
         android:id="@+id/dic"
         android:layout_width="@dimen/limit_size_20dp"
         android:layout_height="@dimen/limit_size_20dp"
-        android:src="@drawable/ic_right_action_black"
+        android:src="@drawable/ic_right_action_fine_black"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
         android:scaleType="centerInside"

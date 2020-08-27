@@ -23,10 +23,11 @@ public class LoginActivity : BaseAppActivity() {
     }
 
     override fun initListener() {
+        viewModel.isMonitorWyLogin(false)
         viewModel.loginDataLiveData.observe(this, Observer {
             SaveUserData.get().accId =  it.accid
             SaveUserData.get().token =  it.token
-            SaveUserData.get().username =  it.name
+            SaveUserData.get().username =  it.name+""
             SaveUserData.get().id =  it.id
             SaveUserData.get().imToken =  it.imToken
             SaveUserData.get().qrCodeUrl =  it.qrCodeUrl
@@ -35,14 +36,17 @@ public class LoginActivity : BaseAppActivity() {
             viewModel.wyLogin(it.accid,it.imToken)
         })
         viewModel.isLoginSuccess.observe(this, Observer {
+            viewModel.isClick.value = true
             if (it){
                 resources.getString(R.string.login_success).showToast()
                 startActivity(Intent(this,HomeMainActivity::class.java))
+                finish()
             }else{
                 resources.getString(R.string.login_failed).showToast()
             }
         })
         viewModel.isShowError.observe(this, Observer {
+            viewModel.isClick.value = true
             it.msg.showToast()
         })
     }

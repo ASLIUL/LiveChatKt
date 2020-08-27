@@ -56,6 +56,8 @@ class UpdateUserDataActivity : BaseAppActivity(),View.OnClickListener {
     }
 
     override fun initListener() {
+
+        binding.liveTitleBar.leftImg.setOnClickListener { finish() }
         binding.addressAction.setOnClickListener {
             dataType = 4
             var alertDialog = AlertDialogUtil.selectAddressDialog(this)
@@ -104,6 +106,8 @@ class UpdateUserDataActivity : BaseAppActivity(),View.OnClickListener {
                 .openGallery(PictureMimeType.ofImage())
                 .selectionMode(PictureConfig.SINGLE)
                 .isGif(false)
+                .isEnableCrop(true)
+                .withAspectRatio(1,1)
                 .cropImageWideHigh(1,1)
                 .freeStyleCropEnabled(true)
                 .scaleEnabled(true)

@@ -11,8 +11,10 @@ import com.netease.nimlib.sdk.chatroom.ChatRoomService
 import com.netease.nimlib.sdk.chatroom.ChatRoomServiceObserver
 import com.netease.nimlib.sdk.chatroom.constant.MemberQueryType
 import com.netease.nimlib.sdk.chatroom.model.ChatRoomMember
+import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomData
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomResultData
+import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum
 import com.yb.livechatkt.bean.ChatRoomCustomMsg
 import com.yb.livechatkt.bean.ChatRoomPerson
 import com.yb.livechatkt.bean.LiveRoomBean
@@ -22,36 +24,40 @@ import com.yb.livechatkt.util.NetConstant
 import com.yb.livechatkt.util.SaveUserData
 import com.yb.livechatkt.util.showToast
 
+
 class LivePlayViewModel(application: Application) : BaseViewModel(application) {
 
     var liveDataLiveData = MutableLiveData<LiveRoomBean>()
     var chatRoomMessageLiveData = MutableLiveData<MutableList<ChatRoomCustomMsg>>()
     val liveExitRoomLiveData = MutableLiveData<Boolean>()
-    //var chatMsgConnect = MutableLiveData<String>()
     var roomPersonLiveData = MutableLiveData<MutableList<ChatRoomPerson>>()
+
+    var chatRoomMessagesLiveData = MutableLiveData<ChatRoomCustomMsg>()
 
     init {
         chatRoomMessageLiveData.value = ArrayList()
         liveExitRoomLiveData.value = false
     }
 
-    fun searchLiveByLiveId(isShare:Boolean,liveId:Int,shareUserId:Int = 0){
+    fun searchLiveByLiveId(isShare: Boolean, liveId: Int, shareUserId: Int = 0){
 
         if (isShare){
-            launch({userApi.getLiveRoomDataByIdNoShare(liveId)},liveDataLiveData)
+            launch({ userApi.getLiveRoomDataByIdNoShare(liveId) }, liveDataLiveData)
         }else{
-            launch({userApi.getLiveRoomDataByIdAndShare(liveId,shareUserId)},liveDataLiveData)
+            launch({ userApi.getLiveRoomDataByIdAndShare(liveId, shareUserId) }, liveDataLiveData)
         }
     }
     //加入聊天室
     fun joinLiveRoom(){
         val enterChatRoom = EnterChatRoomData(liveDataLiveData.value?.room_id.toString())
-        NIMClient.getService(ChatRoomService::class.java).enterChatRoomEx(enterChatRoom,3).setCallback(
+        NIMClient.getService(ChatRoomService::class.java).enterChatRoomEx(enterChatRoom, 3).setCallback(
             object : RequestCallback<EnterChatRoomResultData> {
                 override fun onSuccess(param: EnterChatRoomResultData?) {
                     isObserverMessage(true)
-                    Log.d(TAG, "onSuccess: ${param.toString()}")
+                    getChatRoomPerson()
+                    getChatRoomHistoryMessage()
                 }
+
                 override fun onFailed(code: Int) {
                     Log.d(TAG, "onFailed: $code")
                 }
@@ -68,33 +74,53 @@ class LivePlayViewModel(application: Application) : BaseViewModel(application) {
         NIMClient.getService(ChatRoomService::class.java).exitChatRoom(liveDataLiveData.value?.room_id.toString())
     }
     //是否开始监听消息
-    fun isObserverMessage(isStart:Boolean){
+    fun isObserverMessage(isStart: Boolean){
         NIMClient.getService(ChatRoomServiceObserver::class.java)
             .observeReceiveMessage({
-                if (it.isNotEmpty()){
-                    it.forEach {chatMsg ->
-                        val chatMessage:ChatRoomCustomMsg = Gson().fromJson(chatMsg.content,ChatRoomCustomMsg::class.java)
-                        if (chatMessage.code == NetConstant.responseSuccessCode){
-                            chatRoomMessageLiveData.value?.add(chatMessage)
-                        }else if (chatMessage.code == NetConstant.EXIT_LIVE){
+                if (it.isNotEmpty()) {
+                    it.forEach { chatMsg ->
+                        val chatMessage: ChatRoomCustomMsg = Gson().fromJson(
+                            chatMsg.content,
+                            ChatRoomCustomMsg::class.java
+                        )
+                        if (chatMessage.code == NetConstant.responseSuccessCode) {
+                            //chatRoomMessageLiveData.value?.add(chatMessage)
+                            chatRoomMessagesLiveData.value = chatMessage
+                        } else if (chatMessage.code == NetConstant.EXIT_LIVE) {
                             liveExitRoomLiveData.value = true
                         }
                     }
                 }
-            },isStart)
+            }, isStart)
     }
     //发送文本信息
-    fun sendTextMessage(connect:String){
-        if (connect.isNotEmpty()!!){
+    fun sendTextMessage(connect: String){
+        if (connect.isEmpty()){
            NetConstant.NOT_INPUT_SOMETHING.showToast()
         }
-        val msgData = MsgData(connect,SaveUserData.get().username,SaveUserData.get().id.toString(),SaveUserData.get().accId,SaveUserData.get().role,SaveUserData.get().role)
-        var chatRoomCustomMsg = ChatRoomCustomMsg(NetConstant.responseSuccessCode,NetConstant.reponseDefaultMsg,msgData)
-        val chatRoomMsg = ChatRoomMessageBuilder.createChatRoomTextMessage(liveDataLiveData.value?.room_id.toString(),Gson().toJson(chatRoomCustomMsg))
-        NIMClient.getService(ChatRoomService::class.java).sendMessage(chatRoomMsg,false).setCallback(
+        val msgData = MsgData(
+            connect,
+            SaveUserData.get().username,
+            SaveUserData.get().id.toString(),
+            SaveUserData.get().accId,
+            SaveUserData.get().role,
+            SaveUserData.get().role
+        )
+        var chatRoomCustomMsg = ChatRoomCustomMsg(
+            NetConstant.responseSuccessCode,
+            NetConstant.reponseDefaultMsg,
+            System.currentTimeMillis(),
+            msgData
+        )
+        val chatRoomMsg = ChatRoomMessageBuilder.createChatRoomTextMessage(
+            liveDataLiveData.value?.room_id.toString(), Gson().toJson(
+                chatRoomCustomMsg
+            )
+        )
+        NIMClient.getService(ChatRoomService::class.java).sendMessage(chatRoomMsg, false).setCallback(
             object : RequestCallback<Void> {
                 override fun onSuccess(param: Void?) {
-
+                    chatRoomMessagesLiveData.value = chatRoomCustomMsg
                 }
 
                 override fun onFailed(code: Int) {
@@ -108,13 +134,24 @@ class LivePlayViewModel(application: Application) : BaseViewModel(application) {
     }
     //获取直播间人员列表
     fun getChatRoomPerson(){
-        NIMClient.getService(ChatRoomService::class.java).fetchRoomMembers(liveDataLiveData.value?.room_id.toString(),MemberQueryType.ONLINE_NORMAL,0,20).setCallback(
+        NIMClient.getService(ChatRoomService::class.java).fetchRoomMembers(
+            liveDataLiveData.value?.room_id.toString(),
+            MemberQueryType.GUEST,
+            0,
+            20
+        ).setCallback(
             object : RequestCallback<MutableList<ChatRoomMember>> {
                 override fun onSuccess(param: MutableList<ChatRoomMember>?) {
-                    var personList:MutableList<ChatRoomPerson> = ArrayList()
-                    if (param?.isNotEmpty()!!){
+                    var personList: MutableList<ChatRoomPerson> = ArrayList()
+                    if (param?.isNotEmpty()!!) {
                         param.forEach {
-                            personList.add(ChatRoomPerson(it.account,it.nick,LiveChatUrl.headerBaseUrl+it.account))
+                            personList.add(
+                                ChatRoomPerson(
+                                    it.account,
+                                    it.nick,
+                                    LiveChatUrl.headerBaseUrl + it.account
+                                )
+                            )
                         }
                         roomPersonLiveData.value = personList
                     }
@@ -129,6 +166,44 @@ class LivePlayViewModel(application: Application) : BaseViewModel(application) {
                 }
 
             })
+    }
+
+    //获取历史消息
+    fun getChatRoomHistoryMessage(){
+
+        NIMClient.getService(ChatRoomService::class.java)
+            .pullMessageHistoryEx(liveDataLiveData.value?.room_id.toString(), System.currentTimeMillis(), 50, QueryDirectionEnum.QUERY_OLD).setCallback(
+                object : RequestCallback<MutableList<ChatRoomMessage>> {
+                    override fun onSuccess(param: MutableList<ChatRoomMessage>?) {
+                        if (!param.isNullOrEmpty()) {
+                            param.forEach {
+                                Log.d(TAG, "onSuccess1: ${it.content}")
+                                if (!it.content.startsWith("{") && !it.content.endsWith("}")) {
+                                    return@forEach
+                                }
+                                Log.d(TAG, "onSuccess2: ${it.content}")
+                                val message = Gson().fromJson<ChatRoomCustomMsg>(
+                                    it.content,
+                                    ChatRoomCustomMsg::class.java
+                                )
+                                if (message.code == NetConstant.responseSuccessCode) {
+                                    message.time = it.time
+                                    chatRoomMessagesLiveData.value = message
+                                } else if (message.code == NetConstant.EXIT_LIVE) {
+                                    liveExitRoomLiveData.value = true
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onFailed(code: Int) {
+
+                    }
+
+                    override fun onException(exception: Throwable?) {
+
+                    }
+                })
     }
 
 

@@ -94,6 +94,7 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                     Glide.with(context).load(LiveChatUrl.headerBaseUrl+dataList[position].fromAccount).into((holder as SendTextMessageViewHolder).header)
                     holder.name.text = dataList[position].fromNick
                     holder.msgConnect.text = dataList[position].content
+                    holder.state.visibility = View.GONE
                     when(dataList[position].status) {
                         MsgStatusEnum.sending -> holder.state.text = context.resources.getString(R.string.sending)
                         MsgStatusEnum.fail -> holder.state.text = context.resources.getString(R.string.send_failed)
@@ -104,6 +105,7 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                     Glide.with(context).load(LiveChatUrl.headerBaseUrl+dataList[position].fromAccount).into((holder as ReceiveTextMessageViewHolder).header)
                     holder.name.text = dataList[position].fromNick
                     holder.msgConnect.text = dataList[position].content
+                    holder.state.visibility = View.GONE
                     when(dataList[position].status) {
                         MsgStatusEnum.sending -> holder.state.text = context.resources.getString(R.string.sending)
                         MsgStatusEnum.fail -> holder.state.text = context.resources.getString(R.string.send_failed)
@@ -115,6 +117,7 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                     Glide.with(context).load(imageAttachment.thumbUrl).into((holder as SendPicMessageViewHolder).msgConnect)
                     Glide.with(context).load(LiveChatUrl.headerBaseUrl+dataList[position].fromAccount).into(holder.header)
                     holder.name.text = dataList[position].fromNick
+                    holder.state.visibility = View.GONE
                     when(dataList[position].status) {
                         MsgStatusEnum.sending -> holder.state.text = context.resources.getString(R.string.sending)
                         MsgStatusEnum.fail -> holder.state.text = context.resources.getString(R.string.send_failed)
@@ -126,6 +129,7 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                     Glide.with(context).load(imageAttachment.thumbUrl).into((holder as ReceivePicMessageViewHolder).msgConnect)
                     Glide.with(context).load(LiveChatUrl.headerBaseUrl+dataList[position].fromAccount).into(holder.header)
                     holder.name.text = dataList[position].fromNick
+                    holder.state.visibility = View.GONE
                     when(dataList[position].status) {
                         MsgStatusEnum.sending -> holder.state.text = context.resources.getString(R.string.sending)
                         MsgStatusEnum.fail -> holder.state.text = context.resources.getString(R.string.send_failed)
@@ -137,6 +141,7 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                     val audioAttachment = dataList[position].attachment as AudioAttachment
                     holder.msgConnect.text = (audioAttachment.duration/1000).toString()
                     holder.name.text = dataList[position].fromNick
+                    holder.state.visibility = View.GONE
                     when(dataList[position].status) {
                         MsgStatusEnum.sending -> holder.state.text = context.resources.getString(R.string.sending)
                         MsgStatusEnum.fail -> holder.state.text = context.resources.getString(R.string.send_failed)
@@ -148,6 +153,7 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                     val audioAttachment = dataList[position].attachment as AudioAttachment
                     holder.msgConnect.text = (audioAttachment.duration/1000).toString()
                     holder.name.text = dataList[position].fromNick
+                    holder.state.visibility = View.GONE
                     when(dataList[position].status) {
                         MsgStatusEnum.sending -> holder.state.text = context.resources.getString(R.string.sending)
                         MsgStatusEnum.fail -> holder.state.text = context.resources.getString(R.string.send_failed)
@@ -159,6 +165,7 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                     Glide.with(context).load(videoAttachment.thumbUrl).into((holder as SendVideoMessageViewHolder).msgConnect)
                     Glide.with(context).load(LiveChatUrl.headerBaseUrl+dataList[position].fromAccount).into(holder.header)
                     holder.name.text = dataList[position].fromNick
+                    holder.state.visibility = View.GONE
                     when(dataList[position].status) {
                         MsgStatusEnum.sending -> holder.state.text = context.resources.getString(R.string.sending)
                         MsgStatusEnum.fail -> holder.state.text = context.resources.getString(R.string.send_failed)
@@ -170,6 +177,7 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                     Glide.with(context).load(videoAttachment.thumbUrl).into((holder as ReceiveVideoMessageViewHolder).msgConnect)
                     Glide.with(context).load(LiveChatUrl.headerBaseUrl+dataList[position].fromAccount).into(holder.header)
                     holder.name.text = dataList[position].fromNick
+                    holder.state.visibility = View.GONE
                     when(dataList[position].status) {
                         MsgStatusEnum.sending -> holder.state.text = context.resources.getString(R.string.sending)
                         MsgStatusEnum.fail -> holder.state.text = context.resources.getString(R.string.send_failed)
@@ -184,6 +192,7 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                         holder.liveTitle.text = customMessage.liveShareMessageBean?.liveTitle
                         holder.msgTitle.text = customMessage.liveShareMessageBean?.liveName + context.resources.getString(R.string.liveing)
                         holder.name.text = dataList[position].fromNick
+                        holder.state.visibility = View.GONE
                         when(dataList[position].status) {
                             MsgStatusEnum.sending -> holder.state.text = context.resources.getString(R.string.sending)
                             MsgStatusEnum.fail -> holder.state.text = context.resources.getString(R.string.send_failed)
@@ -199,6 +208,7 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                         holder.liveTitle.text = customMessage.liveShareMessageBean?.liveTitle
                         holder.msgTitle.text = customMessage.liveShareMessageBean?.liveName + context.resources.getString(R.string.liveing)
                         holder.name.text = dataList[position].fromNick
+                        holder.state.visibility = View.GONE
                         when(dataList[position].status) {
                             MsgStatusEnum.sending -> holder.state.text = context.resources.getString(R.string.sending)
                             MsgStatusEnum.fail -> holder.state.text = context.resources.getString(R.string.send_failed)

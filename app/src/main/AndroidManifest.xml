@@ -12,14 +12,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/group_header"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:name=".LiveChatKtApplication"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.activity.LoginActivity">
+        <activity android:name=".ui.activity.LoginActivity" android:launchMode="singleInstance">
         </activity>
         <activity android:name=".ui.activity.HomeMainActivity">
             <intent-filter>
@@ -45,13 +44,13 @@
         <activity android:name=".ui.activity.CompleteInformationActivity"/>
         <activity android:name=".ui.activity.LivePlayActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:windowSoftInputMode="stateAlwaysHidden|stateVisible|adjustResize"
+            android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait"
             ></activity>
         <activity android:name=".ui.activity.LivePlayerBottomInputActivity"
             android:theme="@style/liveInputPanel"
             android:configChanges="keyboardHidden"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustPan|stateHidden"/>
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
 
     </application>
 

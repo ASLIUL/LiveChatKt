@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.yb.livechatkt.R
 import com.yb.livechatkt.databinding.FragmentMineBinding
+import com.yb.livechatkt.db.DBManager
 import com.yb.livechatkt.ui.activity.*
 import com.yb.livechatkt.util.NetConstant
 import com.yb.livechatkt.util.QRCodeUtil
@@ -26,6 +27,7 @@ class MineFragment : BaseFragment() {
     lateinit var binding: FragmentMineBinding
     //在线状态 1去上线，2 去下线
     private var status:String = "2"
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,6 +88,12 @@ class MineFragment : BaseFragment() {
             intent.putExtra("meData",viewModel.meDataLiveData.value)
             startActivity(intent)
         }
+        viewModel.userNotDataLiveData.observe(requireActivity(), Observer {
+            if (it){
+                resources.getString(R.string.please_complete_data).showToast()
+                startActivity(Intent(requireContext(),CompleteInformationActivity::class.java))
+            }
+        })
 
         viewModel.updateStatusLiveData.observe(requireActivity(), Observer {
             if (it){

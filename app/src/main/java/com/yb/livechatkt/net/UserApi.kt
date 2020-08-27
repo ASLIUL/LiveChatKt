@@ -82,6 +82,14 @@ interface UserApi {
     @GET(LiveChatUrl.getLiveRoomDataByLiveId)
     suspend fun getLiveRoomDataByIdNoShare(@Query("id") id:Int) : Result<LiveRoomBean>
 
+    @Multipart
+    @POST(LiveChatUrl.adminUploadFile)
+    suspend fun adminUploadMessageFile(@Part file:List<MultipartBody.Part>) :Result<Any>
+
+    //检查客服是否在线
+    @GET(LiveChatUrl.judgeServiceIsOLine)
+    suspend fun judgeServiceIsOnLine(@Query("accid") accid:String) : Result<Any>
+
 
 
 }

@@ -45,6 +45,7 @@
             android:id="@+id/choose_group_list"
             android:layout_width="match_parent"
             android:layout_height="@dimen/limit_size_80dp"
+            android:paddingLeft="@dimen/limit_size_20dp"
             app:layout_constraintVertical_bias="0.01"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -87,7 +88,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/limit_size_50dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/more_action_line"
+            app:layout_constraintTop_toTopOf="@id/view2"
             tools:ignore="MissingConstraints">
 
             <ImageView

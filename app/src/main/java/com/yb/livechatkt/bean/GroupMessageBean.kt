@@ -5,15 +5,30 @@ import android.media.MediaMetadataRetriever
 import com.google.gson.Gson
 import java.io.File
 
-class GroupMessageBean(var uuid:String,var body:String,var file:String,var toAccids:String,var type:Int,var sendState:String) {
+class GroupMessageBean(var uuid:String,var body:String,var file:String,var toAccids:String,var type:Int,var sendState:String,var filepPath:String) {
 
     companion object{
         fun createTextMessage(text:String,toAccids: String):GroupMessageBean {
-            return GroupMessageBean(System.currentTimeMillis().toString(),Gson().toJson(TextMessage(text)),"",toAccids,0,"")
+            return GroupMessageBean(System.currentTimeMillis().toString(),Gson().toJson(TextMessage(text)),"",toAccids,0,"","")
         }
         fun createPicMessage(file:File,url:String,toAccids: String):GroupMessageBean {
             val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-            return GroupMessageBean(System.currentTimeMillis().toString(),Gson().toJson(PicMessage(file.name,getExt(file.absolutePath),bitmap.width,bitmap.height,file.length())),url,toAccids,1,"")
+            return GroupMessageBean(
+                System.currentTimeMillis().toString(),
+                Gson().toJson(
+                    PicMessage(
+                        file.name,
+                        getExt(file.absolutePath),
+                        bitmap.width,
+                        bitmap.height,
+                        file.length()
+                    )
+                ),
+                url,
+                toAccids,
+                1,
+                "",
+                file.absolutePath)
         }
         fun createVoiceMessage(file:File,url:String,audioLength:Long,toAccids: String):GroupMessageBean {
             return GroupMessageBean(
@@ -27,8 +42,8 @@ class GroupMessageBean(var uuid:String,var body:String,var file:String,var toAcc
             ),
                 url,
                 toAccids,
-                1,
-            "")
+                2,
+            "",filepPath = file.absolutePath)
         }
         fun createVideoMessage(file:File,url:String,toAccids: String):GroupMessageBean {
             val retriever = MediaMetadataRetriever()
@@ -46,8 +61,8 @@ class GroupMessageBean(var uuid:String,var body:String,var file:String,var toAcc
             ),
                 url,
                 toAccids,
-                1,
-                "")
+                3,
+                "",file.absolutePath)
         }
 
 

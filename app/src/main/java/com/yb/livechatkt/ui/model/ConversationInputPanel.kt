@@ -13,6 +13,8 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.bumptech.glide.Glide
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.entity.LocalMedia
 import com.netease.nimlib.sdk.media.record.AudioRecorder
@@ -22,6 +24,11 @@ import com.netease.nimlib.sdk.msg.MessageBuilder
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum
 import com.permissionx.guolindev.PermissionX
 import com.yb.livechatkt.R
+import com.yb.livechatkt.bean.ActionType
+import com.yb.livechatkt.bean.PlugBean
+import com.yb.livechatkt.net.LiveChatUrl
+import com.yb.livechatkt.ui.adapter.PlugRecyclerAdapter
+import com.yb.livechatkt.util.SaveUserData
 import com.yb.livechatkt.util.showToast
 import java.io.File
 import java.io.IOException
@@ -33,25 +40,34 @@ class ConversationInputPanel(
     private var inputPanelInterface: ConversationInputPanelInterface
 ) : IAudioRecordCallback {
 
-    var timer: Chronometer = rootView.findViewById(R.id.recording_time)
-    var recordTips: TextView = rootView.findViewById(R.id.record_tips)
-    var recordLine: LinearLayout = rootView.findViewById(R.id.recording_line)
-    var moreAction: ImageView = rootView.findViewById(R.id.more_action)
-    var ActionRecycler: RecyclerView = rootView.findViewById(R.id.action_bar)
-    var msgConnect:EditText = rootView.findViewById(R.id.connect)
-    var send:TextView = rootView.findViewById(R.id.send)
-    val touchRecord:TextView = rootView.findViewById(R.id.touch_recording)
-    val voice:ImageView = rootView.findViewById(R.id.voice)
+    private var timer: Chronometer = rootView.findViewById(R.id.recording_time)
+    private var recordTips: TextView = rootView.findViewById(R.id.record_tips)
+    private var recordLine: LinearLayout = rootView.findViewById(R.id.recording_line)
+    private var moreAction: ImageView = rootView.findViewById(R.id.more_action)
+    private var moreActionLine: LinearLayout = rootView.findViewById(R.id.more_action_line)
+    private var actionRecycler: RecyclerView = rootView.findViewById(R.id.action_bar)
+    private var msgConnect:EditText = rootView.findViewById(R.id.connect)
+    private var send:TextView = rootView.findViewById(R.id.send)
+    private val touchRecord:TextView = rootView.findViewById(R.id.touch_recording)
+    private val voice:ImageView = rootView.findViewById(R.id.voice)
     private val TAG = "ConversationInputPanel"
+    private val messageRemoteMap:MutableMap<String,Any> = HashMap()
+
+    var plugRecyclerAdapter : PlugRecyclerAdapter? = null
 
     //1 图片 2语音，3视频
     private var messageType:Int = 1
+
+
     //是否开始录音
-    private var startRecording:Boolean = false
+    private var started:Boolean = false
     //是否正在录音
-    private var isRecording:Boolean = false
+    //private var isRecordAudio:Boolean = false
     //是否取消录音
-    private var isCancelRecord:Boolean = true
+    private var isCancelRecordAudio:Boolean = true
+
+    //是否按着录音TV
+    private var touched:Boolean = false
 
     var audioRecorder: AudioRecorder? = null
     //录音最长时间
@@ -62,18 +78,61 @@ class ConversationInputPanel(
     private val cameraCode:Int = 100004
 
     init {
+
+        messageRemoteMap["name"] = SaveUserData.get().username+""
+        messageRemoteMap["pic"] = LiveChatUrl.headerBaseUrl+SaveUserData.get().accId
+        val plugAlbum = PlugBean(ActionType.ALUBM)
+        //val plugShot = PlugBean(ActionType.SHOT)
+        val plugVideo = PlugBean(ActionType.VIDEO)
+        val plugList:MutableList<PlugBean> = ArrayList()
+        plugList.add(plugAlbum)
+        //plugList.add(plugShot)
+        plugList.add(plugVideo)
+
+        plugRecyclerAdapter = PlugRecyclerAdapter(context = activity,plugList)
+        var gridLayoutManager = StaggeredGridLayoutManager(4,LinearLayout.VERTICAL)
+        actionRecycler.layoutManager = gridLayoutManager
+        actionRecycler.adapter = plugRecyclerAdapter
         send.setOnClickListener {
             sendTextMessage()
         }
         touchRecord.setOnTouchListener { view, motionEvent -> {
 
         }
+
             PermissionX.init(activity).permissions(Manifest.permission.RECORD_AUDIO)
                 .request{ allGranted, grantedList, deniedList ->
                     if (allGranted){
-                        initRecord(view, motionEvent)
+                        when(motionEvent.action){
+                            MotionEvent.ACTION_DOWN -> {
+                                touched = true
+                                //isRecordAudio = true
+                                audioRecorder = AudioRecorder(activity, RecordType.AAC, maxTime, this)
+                                activity.window.setFlags(
+                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                )
+                                audioRecorder?.startRecord()
+                                isCancelRecordAudio = false
+                            }
+                            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                                touched = false
+                                //isRecordAudio = false
+                                endRecord(judeIsCancelRecord(view, motionEvent))
+                            }
+                            MotionEvent.ACTION_MOVE -> {
+                                touched = true
+                                //isRecordAudio = true
+                                cancelRecord(judeIsCancelRecord(view, motionEvent))
+                            }
+
+                        }
                     }
                 }
+
+
+
+
 
             false
         }
@@ -82,11 +141,19 @@ class ConversationInputPanel(
                 touchRecord.visibility = View.GONE
                 msgConnect.visibility = View.VISIBLE
                 send.visibility = View.VISIBLE
+                Glide.with(activity).load(R.drawable.ic_voice_black).into(voice)
             }else{
                 touchRecord.visibility = View.VISIBLE
                 msgConnect.visibility = View.GONE
                 send.visibility = View.GONE
+                Glide.with(activity).load(R.drawable.ic_key_board_black).into(voice)
             }
+        }
+        moreAction.setOnClickListener {
+            if (inputPanelInterface.getKeyBoardIsShow()){
+                inputPanelInterface.hideKeyBoard()
+            }
+            if (moreActionLine.visibility == View.VISIBLE) moreActionLine.visibility = View.GONE else moreActionLine.visibility = View.VISIBLE
         }
     }
 
@@ -104,11 +171,12 @@ class ConversationInputPanel(
             sessionTypeEnum,
             msgConnect.text.toString()
         )
+        textMessage.remoteExtension = messageRemoteMap
         msgConnect.setText("")
         inputPanelInterface.sendTextMessage(textMessage)
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent){
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
         if (resultCode != Activity.RESULT_OK){
             return
         }
@@ -135,6 +203,7 @@ class ConversationInputPanel(
                         fileDatas[0]
                     )
                 )
+                message.remoteExtension = messageRemoteMap
                 inputPanelInterface.sendImageMessage(message)
             }
             3 -> {
@@ -148,7 +217,8 @@ class ConversationInputPanel(
                     videoData.get(2).toInt(),
                     file.name
                 )
-                inputPanelInterface.sendImageMessage(message)
+                message.remoteExtension = messageRemoteMap
+                inputPanelInterface.sendVideoMessage(message)
             }
         }
     }
@@ -174,45 +244,15 @@ class ConversationInputPanel(
         return data
     }
 
-    private fun initRecord(view: View, event: MotionEvent){
-        Log.d(TAG, "initRecord: ${event.action}")
-        when(event.action){
-            MotionEvent.ACTION_DOWN -> {
-                isCancelRecord = false
-                audioRecorder = AudioRecorder(activity, RecordType.AAC, maxTime, this)
-                activity.window.setFlags(
-                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
-                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                )
-                audioRecorder?.startRecord()
-                isRecording = true
-            }
-            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                isRecording = false
-                endRecord(judeIsCancelRecord(view, event))
-            }
-            MotionEvent.ACTION_MOVE -> {
-                isRecording = true
-                cancelRecord(judeIsCancelRecord(view, event))
-            }
-
-        }
-    }
     private fun judeIsCancelRecord(view: View, motionEvent: MotionEvent):Boolean{
-        var location:IntArray = intArrayOf(1, 2)
+        var location:IntArray = intArrayOf(0, 0)
         view.getLocationOnScreen(location)
-        return if (motionEvent.rawY < location[1] + 40){
-            updateView(true)
-            isCancelRecord = true
-            true
-        }else{
-            updateView(false)
-            isCancelRecord = false
-            false
-        }
+        Log.d(TAG, "judeIsCancelRecord: ${location[0]} \t ${location[1]}")
+        return motionEvent.rawY < location[1] - 40
+        return false
     }
     private fun endRecord(cancel: Boolean){
-       startRecording = false
+        started = false
         activity.window.setFlags(0, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         audioRecorder?.completeRecord(cancel)
         stopRecord()
@@ -220,13 +260,13 @@ class ConversationInputPanel(
 
     private fun cancelRecord(cancel: Boolean){
         Log.d(TAG, "cancelRecord: $cancel")
-        if (!startRecording){
+        if (!started){
             return
         }
-        if (isCancelRecord == cancel){
+        if (isCancelRecordAudio == cancel){
             return
         }
-        isCancelRecord = cancel
+        isCancelRecordAudio = cancel
         updateView(cancel)
     }
 
@@ -254,9 +294,10 @@ class ConversationInputPanel(
 
 
     override fun onRecordSuccess(audioFile: File?, audioLength: Long, recordType: RecordType?) {
-        if (!isCancelRecord){
+        if (!isCancelRecordAudio){
             //发送语音消息
             var voiceMessage = MessageBuilder.createAudioMessage(inputPanelInterface.getToAccIds(),sessionTypeEnum,audioFile,audioLength)
+            voiceMessage.remoteExtension = messageRemoteMap
             inputPanelInterface.sendVoiceMessage(voiceMessage)
         }
     }
@@ -275,8 +316,8 @@ class ConversationInputPanel(
     }
 
     override fun onRecordStart(audioFile: File?, recordType: RecordType?) {
-        startRecording = true
-        if (!isRecording){
+        started = true
+        if (!touched){
             return
         }
         updateView(false)
@@ -284,7 +325,7 @@ class ConversationInputPanel(
     }
 
     override fun onRecordFail() {
-        if (startRecording){
+        if (started){
             activity.resources.getString(R.string.record_error).showToast()
             stopRecord()
         }

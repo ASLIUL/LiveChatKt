@@ -12,7 +12,6 @@
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toStartOf="@+id/header_img"
         app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,11 +25,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@mipmap/message_right"
+        android:layout_marginTop="@dimen/limit_size_20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/header_img"
         app:layout_constraintHorizontal_bias="0.96"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/name"
         app:layout_constraintVertical_bias="0.02"
         tools:ignore="MissingConstraints">
 

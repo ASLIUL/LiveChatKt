@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/limit_size_5dp"
+    android:background="@drawable/chat_room_msg_bg"
+    android:layout_margin="@dimen/limit_size_5dp"
+    >
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/home"
+        android:textColor="@color/theme_bg_color"
+        android:layout_marginStart="@dimen/limit_size_5dp"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/connect"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        tools:text="@string/home_bottom_text_1"
+        android:layout_marginStart="@dimen/limit_size_10dp"
+        tools:ignore="MissingConstraints" />
+
+</LinearLayout>

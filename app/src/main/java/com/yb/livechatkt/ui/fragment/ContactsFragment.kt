@@ -18,6 +18,7 @@ import com.yb.livechatkt.bean.HyGroup
 import com.yb.livechatkt.bean.RowX
 import com.yb.livechatkt.databinding.FragmentContactsBinding
 import com.yb.livechatkt.databinding.FragmentLiveBinding
+import com.yb.livechatkt.ui.activity.CompleteInformationActivity
 import com.yb.livechatkt.ui.activity.ConversationActivity
 import com.yb.livechatkt.ui.adapter.ContactsListRecyclerAdapter
 import com.yb.livechatkt.util.NetConstant
@@ -74,6 +75,12 @@ class ContactsFragment : BaseFragment() {
             startActivity(intent)
 
         }
+        viewModel.userNotDataLiveData.observe(requireActivity(), Observer {
+            if (it){
+                resources.getString(R.string.please_complete_data).showToast()
+                startActivity(Intent(requireContext(),CompleteInformationActivity::class.java))
+            }
+        })
 
         contactsAdapter?.setItemClickListener(object:ContactsListRecyclerAdapter.OnItemClickListener{
             override fun itemClickListener(view: View, rowX: RowX, position: Int) {

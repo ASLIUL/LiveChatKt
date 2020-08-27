@@ -12,6 +12,7 @@ object NetConstant {
     val responseDefaultCode:Int = 100
     val responseSuccessCode:Int = 200
     val responseErrorCode:Int = 1
+    val responseNoDataCode = 100010
     val reponseDefaultMsg:String = "操作成功"
     val reponseErrorMsg:String = "网络错误，请稍后重试"
     val responseTokenFailedCode:Int = 400000;
@@ -35,6 +36,8 @@ object NetConstant {
     const val SESSION_P2P = 1
     const val SESSION_TEAM = 2
     const val SESSION_SERVICE = 3
+    const val SESSION_HAS_SERVICE_SESSION = 4
+    const val SESSION_NORMAL_USER_SESSION = 5
 
     //会话数据的key
     const val CONVERSATION_DATA = "conversation_data"
@@ -62,4 +65,6 @@ object NetConstant {
 
     const val NOT_INPUT_SOMETHING = "不可以发送空消息哦"
     const val EXIT_LIVE = 100
+
+    const val CHAT_ROOM_INPUT_CONNECT = "chat_room_connect"
 }

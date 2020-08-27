@@ -24,13 +24,22 @@ class LiveTitleBar(context: Context,attributeSet: AttributeSet) : ConstraintLayo
 
     //value
     var leftTitleValue:String?
+
+
     var leftImgValue:Int = R.drawable.ic_baseline_arrow_back_ios_24
+
     var leftType:Int = 0
+
     var centerTitleValue:String?
+
     var centerType:Int = 0
+
     var rightTitleValue:String?
+
     var rightImgValue:Int = R.drawable.ic_menu_black_24dp
+
     var rightType:Int = 0
+
     var textColor:Int = Color.BLACK
 
 

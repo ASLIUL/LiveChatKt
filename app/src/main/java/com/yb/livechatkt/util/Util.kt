@@ -15,14 +15,18 @@ import androidx.annotation.RequiresApi
 import androidx.core.net.toFile
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum
 import com.netease.nimlib.sdk.msg.model.IMMessage
+import com.netease.nimlib.sdk.msg.model.RecentContact
 import com.yb.livechatkt.LiveChatKtApplication
 import com.yb.livechatkt.R
+import com.yb.livechatkt.ui.model.LiveCustomAttachment
+import com.yb.livechatkt.ui.model.ShareLiveMessageAttachment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.text.ParsePosition
+import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.random.Random.Default.nextInt
 
 fun String.showToast(duration: Int = Toast.LENGTH_SHORT){
     Toast.makeText(LiveChatKtApplication.context, this, duration).show()
@@ -96,6 +100,28 @@ fun getConnect(imMessage: IMMessage):String{
         else -> "未读消息"
     }
 }
+
+fun getConnect(message: RecentContact): String {
+    if (message.msgType == MsgTypeEnum.text) {
+        return message.content
+    } else if (message.msgType == MsgTypeEnum.video) {
+        return "[视频]"
+    } else if (message.msgType == MsgTypeEnum.audio) {
+        return "[语音]"
+    } else if (message.msgType == MsgTypeEnum.image) {
+        return "[图片]"
+    } else if (message.msgType == MsgTypeEnum.tip) {
+        return message.content
+    } else if (message.msgType == MsgTypeEnum.custom) {
+        val liveCustomAttachment = message.attachment as LiveCustomAttachment
+        if (liveCustomAttachment is ShareLiveMessageAttachment) {
+            return "分享了直播"
+        }
+    }
+    return "收到一条新消息"
+}
+
+
 @RequiresApi(Build.VERSION_CODES.Q)
 fun uriToFileQ(context: Context, uri: Uri): File? =
     if (uri.scheme == ContentResolver.SCHEME_FILE)
@@ -125,3 +151,15 @@ fun uriToFileQ(context: Context, uri: Uri): File? =
         }
 
     } else null
+
+fun dp2px(context: Context, dipValue: Float): Int {
+    val scale = context.resources.displayMetrics.density
+    return (dipValue * scale + 0.5f).toInt()
+}
+
+fun transToString(time: Long):String{
+    return SimpleDateFormat("hh:mm").format(time)
+}
+fun transToTimeStamp(date: String):Long{
+    return SimpleDateFormat("hh:mm").parse(date, ParsePosition(0)).time
+}

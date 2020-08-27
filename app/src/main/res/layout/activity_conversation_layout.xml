@@ -31,6 +31,8 @@
             android:id="@+id/message_recycler"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintBottom_toTopOf="@id/view2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +45,7 @@
             android:layout_height="@dimen/limit_size_05dp"
             android:background="@color/view_dividing_line"
             app:layout_constraintBottom_toTopOf="@id/input_panel"
-            app:layout_constraintTop_toBottomOf="@+id/message_list"
+            app:layout_constraintTop_toBottomOf="@id/message_recycler"
             tools:ignore="MissingConstraints" />
 
         <LinearLayout
@@ -51,7 +53,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/limit_size_50dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@id/view2"
+            app:layout_constraintBottom_toTopOf="@id/more_action_line"
             tools:ignore="MissingConstraints">
 
             <ImageView
@@ -75,6 +78,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="@string/touch_recording"
+                android:clickable="true"
+                android:enabled="true"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:visibility="gone"
@@ -127,11 +132,11 @@
 
         <LinearLayout
             android:id="@+id/recording_line"
-            android:layout_width="@dimen/limit_size_150dp"
-            android:layout_height="@dimen/limit_size_150dp"
+            android:layout_width="@dimen/limit_size_120dp"
+            android:layout_height="@dimen/limit_size_120dp"
             android:orientation="vertical"
             android:visibility="gone"
-            android:background="@color/show_record_bg"
+            android:background="@drawable/show_record_bg"
             tools:ignore="MissingConstraints"
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"

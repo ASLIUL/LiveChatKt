@@ -53,11 +53,11 @@ class RoundImageView(context: Context, attributeSet: AttributeSet) : AppCompatIm
         )
 
         mBorderWidth = a.getDimensionPixelSize(
-            R.styleable.RoundImageView_border_width,
+            R.styleable.RoundImageView_border_width_round,
             DEFAULT_BORDER_WIDTH
         )
         mBorderColor = a.getColor(
-            R.styleable.RoundImageView_border_color,
+            R.styleable.RoundImageView_border_color_round,
             DEFAULT_BORDER_COLOR
         )
 

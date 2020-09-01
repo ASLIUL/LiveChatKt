@@ -87,5 +87,6 @@
     <string name="current_time_not_live">当前时间暂无直播</string>
     <string name="session">消息</string>
     <string name="already_off_line">您已被挤下线，请稍后尝试重新登陆</string>
+    <string name="live_exit">主播已经下播咯</string>
 
 </resources>

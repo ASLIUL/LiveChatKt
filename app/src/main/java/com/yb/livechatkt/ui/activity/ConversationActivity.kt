@@ -3,13 +3,21 @@ package com.yb.livechatkt.ui.activity
 import android.content.Intent
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.PagerAdapter
+import com.bumptech.glide.Glide
 import com.netease.nimlib.sdk.NIMClient
 import com.netease.nimlib.sdk.msg.MsgService
+import com.netease.nimlib.sdk.msg.attachment.AudioAttachment
+import com.netease.nimlib.sdk.msg.attachment.ImageAttachment
+import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum
 import com.netease.nimlib.sdk.msg.model.IMMessage
 import com.netease.nimlib.sdk.msg.model.RecentContact
@@ -22,10 +30,7 @@ import com.yb.livechatkt.databinding.ActivityConversationLayoutBinding
 import com.yb.livechatkt.ui.adapter.ConversationRecyclerAdapter
 import com.yb.livechatkt.ui.model.ConversationInputPanel
 import com.yb.livechatkt.ui.model.ConversationInputPanelInterface
-import com.yb.livechatkt.util.MessageDataComparator
-import com.yb.livechatkt.util.NetConstant
-import com.yb.livechatkt.util.SoftKeyBoardListener
-import com.yb.livechatkt.util.showToast
+import com.yb.livechatkt.util.*
 import com.yb.livechatkt.vm.ConversationViewModel
 import java.util.*
 import kotlin.collections.ArrayList
@@ -45,6 +50,8 @@ class ConversationActivity:BaseAppActivity(),ConversationInputPanelInterface {
     private var acccid:String = ""
     private var keyBoardShow:Boolean = false
     private var softKeyBoardListener: SoftKeyBoardListener? = null
+    private var audioUtil:AudioUtil? = null
+
 
     override fun initView() {
         binding = DataBindingUtil.setContentView(this, getLayout())
@@ -91,6 +98,7 @@ class ConversationActivity:BaseAppActivity(),ConversationInputPanelInterface {
                 viewModel.getHistoryMessage(acccid, sessionTypeEnum)
             }
         }
+        audioUtil = AudioUtil(this)
         viewModel.contactName = binding.liveTitleBar.centerTitle.text.toString()
         inputPanel = ConversationInputPanel(this, binding.root, sessionTypeEnum, this)
         conversationAdapter = ConversationRecyclerAdapter(this, messageList)
@@ -146,6 +154,27 @@ class ConversationActivity:BaseAppActivity(),ConversationInputPanelInterface {
         viewModel.isOffLineLiveData.observe(this,{
             if (it) {offLine();finish()}
         })
+        conversationAdapter?.onItemClickListener = object : ConversationRecyclerAdapter.OnItemClickListener{
+            override fun onItemClick(view: View, imMessage: IMMessage, position: Int) {
+                when(imMessage.msgType){
+                    MsgTypeEnum.audio->{
+                        val audioMsg = imMessage.attachment as AudioAttachment
+                        audioUtil?.audioUrl = audioMsg.url
+                        audioUtil?.startPlayer()
+                    }
+                    MsgTypeEnum.image -> {
+                        val imageAttachment = imMessage.attachment as ImageAttachment
+                        showImage(imageAttachment.url)
+                    }
+                }
+            }
+        }
+
+        conversationAdapter?.onItemLongClickListener = object :ConversationRecyclerAdapter.OnItemLongClickListener{
+            override fun onItemLongClick(view: View, imMessage: IMMessage, position: Int) {
+
+            }
+        }
     }
 
     override fun onStart() {
@@ -185,6 +214,32 @@ class ConversationActivity:BaseAppActivity(),ConversationInputPanelInterface {
         binding.messageRecycler.scrollToPosition(messageList.size - 1)
     }
 
+    private fun showImage(url:String){
+        val imageView = ImageView(this)
+        imageView.scaleType = ImageView.ScaleType.CENTER
+        binding.showImgPager.visibility = View.VISIBLE
+        binding.showImgPager.setOnClickListener{
+            binding.showImgPager.visibility = View.GONE
+        }
+        binding.showImgPager.adapter = object : PagerAdapter(){
+            override fun getCount(): Int  = 1
+
+            override fun isViewFromObject(view: View, `object`: Any): Boolean {
+                return view == `object`
+            }
+
+            override fun instantiateItem(container: ViewGroup, position: Int): Any {
+                container.addView(imageView)
+                Glide.with(this@ConversationActivity).load(url).into(imageView)
+                return imageView
+            }
+
+            override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+                container.removeView(imageView)
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         inputPanel?.onActivityResult(requestCode, resultCode, data)
@@ -222,7 +277,11 @@ class ConversationActivity:BaseAppActivity(),ConversationInputPanelInterface {
     override fun getKeyBoardIsShow(): Boolean = keyBoardShow
 
     override fun hideKeyBoard() {
-
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val v = window.peekDecorView()
+        if (null != v) {
+            imm.hideSoftInputFromWindow(v.windowToken, 0)
+        }
     }
 
 

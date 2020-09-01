@@ -97,7 +97,7 @@ class SessionFragment : BaseFragment() {
                     intent.putExtra(NetConstant.SESSION_TYPE,NetConstant.SESSION_TEAM)
                     intent.putExtra(NetConstant.CONVERSATION_DATA,HyGroup(1,recentContact.contactId.toLong(),resources.getString(R.string.hy_service)))
                 }else if (recentContact.sessionType == SessionTypeEnum.P2P){
-                    if (SaveUserData.get().role>2){
+                    if (SaveUserData.get().role<=2){
                         intent.putExtra(NetConstant.SESSION_TYPE,NetConstant.SESSION_HAS_SERVICE_SESSION)
                         intent.putExtra(NetConstant.CONVERSATION_DATA,recentContact)
                     }else{

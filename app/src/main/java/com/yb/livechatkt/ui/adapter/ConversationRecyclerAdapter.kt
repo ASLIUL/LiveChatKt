@@ -35,6 +35,9 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
     private val RECEIVE_LIVE_SHARE_VIEW = 10
     private val TIP_MESSAGE = 11
 
+    var onItemClickListener:OnItemClickListener? = null
+    var onItemLongClickListener:OnItemLongClickListener? = null
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -220,6 +223,14 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
                     (holder as TipMessageViewHolder).msgConnect.text = dataList[position].content
                 }
             }
+
+            holder.itemView.setOnClickListener {
+                onItemClickListener?.onItemClick(holder.itemView,dataList[position],position)
+            }
+            holder.itemView.setOnLongClickListener {
+                onItemLongClickListener?.onItemLongClick(holder.itemView,dataList[position],position)
+                true
+            }
         }catch (e:Exception){
             e.printStackTrace()
         }
@@ -321,6 +332,13 @@ class ConversationRecyclerAdapter(val context: Context,val dataList:List<IMMessa
     }
     class TipMessageViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         var msgConnect:TextView = itemView.findViewById(R.id.msg_connect)
+    }
+
+    interface OnItemClickListener{
+        fun onItemClick(view: View,imMessage: IMMessage,position: Int)
+    }
+    interface OnItemLongClickListener{
+        fun onItemLongClick(view: View,imMessage: IMMessage,position: Int)
     }
 
 

@@ -125,6 +125,9 @@ class LivePlayActivity : BaseAppActivity() {
         viewModel.isOffLineLiveData.observe(this,{
             if (it) {offLine();finish()}
         })
+        viewModel.liveExitRoomLiveData.observe(this, Observer {
+            resources.getString(R.string.live_exit).showToast()
+        })
     }
     private fun initGSYVideoPlayer(liveRoomBean: LiveRoomBean) {
         val imageView = ImageView(this)

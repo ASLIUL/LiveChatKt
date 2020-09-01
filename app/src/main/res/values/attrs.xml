@@ -17,10 +17,6 @@
         <attr name="title" format="string"/>
         <attr name="dic" format="reference"/>
     </declare-styleable>
-    <declare-styleable name="RoundImageView">
-        <attr name="border_width_round" format="dimension"></attr>
-        <attr name="border_color_round" format="color"></attr>
-    </declare-styleable>
     <declare-styleable name="NiceImageView">
         <attr name="is_circle" format="boolean" />
         <attr name="is_cover_src" format="boolean" />

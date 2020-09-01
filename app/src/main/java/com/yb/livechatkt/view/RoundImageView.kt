@@ -2,257 +2,200 @@ package com.yb.livechatkt.view
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.yb.livechatkt.R
+import kotlin.math.min
 
-class RoundImageView(context: Context, attributeSet: AttributeSet) : AppCompatImageView(
-    context,
-    attributeSet,
-    0
-) {
+class RoundImageView(context: Context, attributeSet: AttributeSet?) : AppCompatImageView(context,attributeSet) {
+    constructor(context: Context):this(context,null)
 
+     //是否为圆形
+    private var isCircle:Boolean = false
+    //border inner——border是否覆盖图片
+    private var isCoverSrc:Boolean = false
+    //边框宽度
+    private var borderWidth:Int = 0
+    //边框颜色
+    private var borderColor:Int = Color.WHITE
+    //内边框宽度
+    private var innerBorderWidth:Int = 0
+    //内边框颜色
+    private var innerBorderColor:Int = Color.WHITE
 
-    private var SCALE_TYPE = ScaleType.CENTER_CROP
-    private var BITMAP_CONFIG = Bitmap.Config.ARGB_8888
-    private var COLORDRAWABLE_DIMENSION = 2
-    private var DEFAULT_BORDER_WIDTH = 0
-    private var DEFAULT_BORDER_COLOR = Color.BLACK
-    private var mDrawableRect = RectF()
-    private var mBorderRect = RectF()
+    //统一设置圆角半径，优先级高于单独设置的圆角半径
+    private var cornerRadius:Int = 0
+    //左上角圆角半径
+    private var cornerTopLeftRadius:Int = 0
+    //右上角圆角半径
+    private var cornerTopRightRadius:Int = 0
+    //右下角圆角半径
+    private var cornerBottomRightRadius:Int = 0
+    //左下
+    private var cornerBottomLeftRadius:Int = 0
 
-    private var mShaderMatrix = Matrix()
-    private var mBitmapPaint = Paint()
-    private var mBorderPaint = Paint()
+    //遮罩颜色
+    private var maskColor:Int = Color.GRAY
 
-    private var mBorderColor = DEFAULT_BORDER_COLOR
-    private var mBorderWidth = DEFAULT_BORDER_WIDTH
+    private var xfermode:Xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
 
-    private var mBitmap: Bitmap? = null
-    private var mBitmapShader: BitmapShader? = null
-    private var mBitmapWidth = 0
-    private var mBitmapHeight = 0
+    private var imageWidth:Int = 0
+    private var imageHeight:Int = 0
+    private var radius:Float = 0f
 
-    private var mDrawableRadius = 0f
-    private var mBorderRadius = 0f
+    private var borderRadiusArray:FloatArray = FloatArray(8)
+    private var srcRadiusArray:FloatArray = FloatArray(8)
 
-    private var mColorFilter: ColorFilter? = null
+    //圆形占的矩形区域
+    private var srcRectF:RectF = RectF()
+    //边框的矩形区域
+    private var borderRectF:RectF = RectF()
 
-    private var mReady = false
-    private var mSetupPending = false
-
+    private var paint:Paint = Paint()
+    private var path:Path = Path() // 用于裁剪图片的path
+    private var srcPath:Path = Path()//图片区域的path
 
     init {
-        val a = context.obtainStyledAttributes(
-            attributeSet,
-            R.styleable.RoundImageView, 0, 0
-        )
+        val typedArray = context.obtainStyledAttributes(attributeSet,
+            R.styleable.NiceImageView,0,0)
+        isCoverSrc = typedArray.getBoolean(R.styleable.NiceImageView_is_cover_src,false)
+        isCircle = typedArray.getBoolean(R.styleable.NiceImageView_is_circle,false)
+        borderWidth = typedArray.getDimensionPixelSize(R.styleable.NiceImageView_border_width,0)
+        borderColor = typedArray.getColor(R.styleable.NiceImageView_border_color,Color.WHITE)
+        innerBorderWidth = typedArray.getDimensionPixelSize(R.styleable.NiceImageView_inner_border_width,0)
+        innerBorderColor = typedArray.getColor(R.styleable.NiceImageView_inner_border_color,Color.WHITE)
+        cornerRadius = typedArray.getDimensionPixelSize(R.styleable.NiceImageView_corner_radius,0)
+        cornerTopLeftRadius = typedArray.getDimensionPixelSize(R.styleable.NiceImageView_corner_top_left_radius,0)
+        cornerTopRightRadius = typedArray.getDimensionPixelSize(R.styleable.NiceImageView_corner_top_right_radius,0)
+        cornerBottomLeftRadius = typedArray.getDimensionPixelSize(R.styleable.NiceImageView_corner_bottom_left_radius,0)
+        cornerBottomRightRadius = typedArray.getDimensionPixelSize(R.styleable.NiceImageView_corner_bottom_right_radius,0)
+        maskColor = typedArray.getColor(R.styleable.NiceImageView_mask_color,Color.GRAY)
 
-        mBorderWidth = a.getDimensionPixelSize(
-            R.styleable.RoundImageView_border_width_round,
-            DEFAULT_BORDER_WIDTH
-        )
-        mBorderColor = a.getColor(
-            R.styleable.RoundImageView_border_color_round,
-            DEFAULT_BORDER_COLOR
-        )
+        typedArray.recycle()
 
-        a.recycle()
-        initView()
-    }
+        calcuateRadii()
+        //clearInnerBorderWidth()
 
-
-    override fun getScaleType(): ScaleType {
-        return SCALE_TYPE
-    }
-
-    override fun setScaleType(scaleType: ScaleType?) {
-        require(scaleType == SCALE_TYPE) { "请设置图片的ScaleType为$SCALE_TYPE" }
-    }
-
-    override fun setAdjustViewBounds(adjustViewBounds: Boolean) {
-        require(!adjustViewBounds) { "adjustViewBounds not supported." }
-    }
-
-    override fun onDraw(canvas: Canvas?) {
-        if (drawable == null) {
-            return
-        }
-
-        canvas!!.drawCircle(
-            width / 2.toFloat(), height / 2.toFloat(), mDrawableRadius,
-            mBitmapPaint
-        )
-        if (mBorderWidth != 0) {
-            canvas.drawCircle(
-                width / 2.toFloat(), height / 2.toFloat(), mBorderRadius,
-                mBorderPaint
-            )
-        }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        setup()
+        imageWidth = w
+        imageHeight = h
+
+        //initBorderRectF()
+        initSrcRectF()
     }
 
-    fun getBorderColor(): Int {
-        return mBorderColor
-    }
-
-    fun setBorderColor(borderColor: Int) {
-        if (borderColor == mBorderColor) {
-            return
+    override fun onDraw(canvas: Canvas?) {
+        canvas?.saveLayer(srcRectF,null,Canvas.ALL_SAVE_FLAG)
+        if (isCoverSrc){
+            val sx = 1.0f * (imageWidth - 2 * borderWidth -2 * innerBorderWidth) / imageWidth
+            val sy = 1.0f * (imageHeight - 2 * borderWidth -2 * innerBorderWidth) / imageHeight
+            canvas?.scale(sx,sy,imageWidth / 2.0f ,imageHeight / 2.0f)
         }
-        mBorderColor = borderColor
-        mBorderPaint.color = mBorderColor
-        invalidate()
-    }
-
-    fun getBorderWidth(): Int {
-        return mBorderWidth
-    }
-
-    fun setBorderWidth(borderWidth: Int) {
-        if (borderWidth == mBorderWidth) {
-            return
+        super.onDraw(canvas)
+        paint.reset()
+        path.reset()
+        if (isCircle){
+            path.addCircle(imageWidth / 2.0f,imageHeight / 2.0f , radius,Path.Direction.CCW)
+        }else{
+            path.addRoundRect(srcRectF,srcRadiusArray,Path.Direction.CCW)
         }
-        mBorderWidth = borderWidth
-        setup()
-    }
+        paint.isAntiAlias = true
+        paint.style = Paint.Style.FILL
+        paint.xfermode = xfermode
+        srcPath.addRect(srcRectF,Path.Direction.CCW)
+        canvas?.drawPath(srcPath,paint)
+        paint.xfermode = null
 
-    override fun setImageBitmap(bm: Bitmap?) {
-        super.setImageBitmap(bm)
-        mBitmap = bm
-        setup()
-    }
-
-    override fun setImageDrawable(drawable: Drawable?) {
-        super.setImageDrawable(drawable)
-        mBitmap = getBitmapFromDrawable(drawable)
-        setup()
-    }
-
-    override fun setImageResource(resId: Int) {
-        super.setImageResource(resId)
-        mBitmap = getBitmapFromDrawable(drawable)
-        setup()
-    }
-
-    override fun setImageURI(uri: Uri?) {
-        super.setImageURI(uri)
-        mBitmap = getBitmapFromDrawable(drawable)
-        setup()
-    }
-
-    override fun setColorFilter(cf: ColorFilter?) {
-        if (cf === mColorFilter) {
-            return
+        if (maskColor != 0){
+            paint.color = maskColor
+            canvas?.drawPath(path,paint)
         }
-
-        mColorFilter = cf
-        mBitmapPaint.colorFilter = mColorFilter
-        invalidate()
+        canvas?.restore()
+        drawBorders(canvas)
     }
 
-    private fun initView() {
-
-        scaleType = SCALE_TYPE
-        mReady = true
-        if (mSetupPending) {
-            setup()
-            mSetupPending = false
-        }
-    }
-
-    private fun setup() {
-        if (!mReady) {
-            mSetupPending = true
-            return
-        }
-        if (mBitmap == null) {
-            return
-        }
-        mBitmapShader = BitmapShader(
-            mBitmap!!, Shader.TileMode.CLAMP,
-            Shader.TileMode.CLAMP
-        )
-        mBitmapPaint.isAntiAlias = true
-        mBitmapPaint.shader = mBitmapShader
-        mBorderPaint.style = Paint.Style.STROKE
-        mBorderPaint.isAntiAlias = true
-        mBorderPaint.color = mBorderColor
-        mBorderPaint.strokeWidth = mBorderWidth.toFloat()
-        mBitmapHeight = mBitmap!!.height
-        mBitmapWidth = mBitmap!!.width
-        mBorderRect[0f, 0f, width.toFloat()] = height.toFloat()
-        mBorderRadius = Math.min(
-            (mBorderRect.height() - mBorderWidth) / 2,
-            (mBorderRect.width() - mBorderWidth) / 2
-        )
-        mDrawableRect[mBorderWidth.toFloat(), mBorderWidth.toFloat(), mBorderRect.width()
-                - mBorderWidth] = mBorderRect.height() - mBorderWidth
-        mDrawableRadius = Math.min(
-            mDrawableRect.height() / 2,
-            mDrawableRect.width() / 2
-        )
-        updateShaderMatrix()
-        invalidate()
-    }
-
-    private fun updateShaderMatrix() {
-        val scale: Float
-        var dx = 0f
-        var dy = 0f
-        mShaderMatrix.set(null)
-        if (mBitmapWidth * mDrawableRect.height() > mDrawableRect.width()
-            * mBitmapHeight
-        ) {
-            scale = mDrawableRect.height() / mBitmapHeight.toFloat()
-            dx = (mDrawableRect.width() - mBitmapWidth * scale) * 0.5f
-        } else {
-            scale = mDrawableRect.width() / mBitmapWidth.toFloat()
-            dy = (mDrawableRect.height() - mBitmapHeight * scale) * 0.5f
-        }
-        mShaderMatrix.setScale(scale, scale)
-        mShaderMatrix.postTranslate(
-            (dx + 0.5f).toInt() + mBorderWidth.toFloat(),
-            (dy + 0.5f).toInt() + mBorderWidth.toFloat()
-        )
-        mBitmapShader!!.setLocalMatrix(mShaderMatrix)
-    }
-
-    private fun getBitmapFromDrawable(drawable: Drawable?): Bitmap? {
-        if (drawable == null) {
-            return null
-        }
-        return if (drawable is BitmapDrawable) {
-            drawable.bitmap
-        } else try {
-            val bitmap: Bitmap
-            bitmap = if (drawable is ColorDrawable) {
-                Bitmap.createBitmap(
-                    COLORDRAWABLE_DIMENSION,
-                    COLORDRAWABLE_DIMENSION,
-                    BITMAP_CONFIG
-                )
-            } else {
-                Bitmap.createBitmap(
-                    drawable.intrinsicWidth,
-                    drawable.intrinsicHeight, BITMAP_CONFIG
-                )
+    private fun drawBorders(canvas: Canvas?){
+        if (isCircle){
+            if (borderWidth > 0){
+                drawCircleBorder(canvas,borderWidth,borderColor,radius - borderWidth / 2.0f)
             }
-            val canvas = Canvas(bitmap)
-            drawable.setBounds(0, 0, canvas.width, canvas.height)
-            drawable.draw(canvas)
-            bitmap
-        } catch (e: OutOfMemoryError) {
-            null
+            if (innerBorderWidth > 0){
+                drawCircleBorder(canvas,innerBorderWidth,innerBorderColor,radius - borderWidth - innerBorderWidth /2.0f)
+            }
+        }else{
+            if (borderWidth > 0){
+                drawRectFBorder(canvas,borderWidth,borderColor,borderRectF,borderRadiusArray)
+            }
         }
     }
+
+    private fun drawCircleBorder(canvas: Canvas?,borderWidth:Int,borderColor:Int,radius:Float){
+        initBorderPaint(borderWidth,borderColor)
+        path.addCircle(imageWidth / 2.0f,imageHeight / 2.0f,radius,Path.Direction.CCW)
+        canvas?.drawPath(path,paint)
+    }
+
+    private fun drawRectFBorder(canvas: Canvas?,borderWidth: Int,borderColor: Int,rectF: RectF,radiusArray: FloatArray){
+        initBorderPaint(borderWidth,borderColor)
+        path.addRoundRect(rectF,radiusArray,Path.Direction.CCW)
+        canvas?.drawPath(path, paint)
+    }
+
+    private fun initBorderPaint(borderWidth: Int,borderColor: Int){
+        path.reset()
+        paint.strokeWidth = borderWidth.toFloat()
+        paint.color = borderColor
+        paint.style = Paint.Style.STROKE
+    }
+
+    private fun initSrcRectF(){
+        if (isCircle){
+            radius = min(imageWidth,imageHeight) / 2.0f
+            srcRectF.set(imageWidth / 2.0f - radius,imageHeight /2.0f - radius,imageWidth / 2.0f + radius,imageHeight / 2.0f +radius)
+        }else{
+            srcRectF.set(0f,0f,imageWidth.toFloat(),imageHeight.toFloat())
+            if (isCoverSrc){
+                srcRectF = borderRectF
+            }
+        }
+    }
+
+    private fun calcuateRadii(){
+        if (isCircle) return
+        if (cornerRadius > 0){
+            var i:Int = 0
+            borderRadiusArray.forEach {
+                cornerRadius = it.toInt()
+                srcRadiusArray[i] = cornerRadius - borderWidth / 2.0f
+                i++
+            }
+        }
+    }
+
+
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

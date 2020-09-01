@@ -39,10 +39,11 @@
             app:layout_constraintVertical_bias="0.06"
             tools:ignore="MissingConstraints">
 
-            <com.yb.livechatkt.view.RoundImageView
+            <com.yb.livechatkt.view.NiceImageView
                 android:id="@+id/header"
                 android:layout_width="@dimen/limit_size_30dp"
                 android:layout_height="@dimen/limit_size_30dp"
+                app:corner_radius="@dimen/limit_size_15dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/limit_size_10dp"
                 android:src="@mipmap/group_header" />

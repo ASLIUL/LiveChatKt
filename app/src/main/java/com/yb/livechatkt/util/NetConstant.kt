@@ -36,7 +36,9 @@ object NetConstant {
     const val SESSION_P2P = 1
     const val SESSION_TEAM = 2
     const val SESSION_SERVICE = 3
+    //普通用户向客服会话请求
     const val SESSION_HAS_SERVICE_SESSION = 4
+    //客服向普通用户的会话请求
     const val SESSION_NORMAL_USER_SESSION = 5
 
     //会话数据的key

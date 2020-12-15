@@ -68,5 +68,7 @@ object NetConstant {
     const val NOT_INPUT_SOMETHING = "不可以发送空消息哦"
     const val EXIT_LIVE = 100
 
+    const val SEND_GIFT_LIVE_MSG = 300
+
     const val CHAT_ROOM_INPUT_CONNECT = "chat_room_connect"
 }

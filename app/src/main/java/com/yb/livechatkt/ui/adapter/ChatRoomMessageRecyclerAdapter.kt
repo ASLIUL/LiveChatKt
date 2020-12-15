@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.yb.livechatkt.R
-import com.yb.livechatkt.bean.ChatRoomCustomMsg
-import java.lang.Exception
+import com.yb.livechatkt.bean.ChatRoomTextMessage
 
-class ChatRoomMessageRecyclerAdapter(val context: Context,val dataList:MutableList<ChatRoomCustomMsg>) : RecyclerView.Adapter<ChatRoomMessageRecyclerAdapter.ChatRoomMessageViewHolder>() {
+class ChatRoomMessageRecyclerAdapter(val context: Context,val dataList:MutableList<ChatRoomTextMessage>) : RecyclerView.Adapter<ChatRoomMessageRecyclerAdapter.ChatRoomMessageViewHolder>() {
 
 
     class ChatRoomMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -33,5 +32,10 @@ class ChatRoomMessageRecyclerAdapter(val context: Context,val dataList:MutableLi
     }
 
     override fun getItemCount(): Int = dataList.size
+
+    fun updateShowData(){
+        notifyItemInserted(itemCount)
+        notifyItemChanged(itemCount)
+    }
 
 }

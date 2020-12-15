@@ -2,9 +2,7 @@ package com.yb.livechatkt.ui.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.text.Html
 import android.util.Log
-import android.view.WindowManager
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
@@ -17,18 +15,15 @@ import com.shuyu.gsyvideoplayer.builder.GSYVideoOptionBuilder
 import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.yb.livechatkt.R
-import com.yb.livechatkt.bean.ChatRoomCustomMsg
-import com.yb.livechatkt.bean.ChatRoomPerson
-import com.yb.livechatkt.bean.LiveRoomBean
+import com.yb.livechatkt.bean.*
 import com.yb.livechatkt.databinding.ActivityLivePlayLayoutBinding
 import com.yb.livechatkt.ui.adapter.ChatRoomMessageRecyclerAdapter
 import com.yb.livechatkt.ui.adapter.ChatRoomPersonRecyclerAdapter
-import com.yb.livechatkt.util.ChatRoomMessageDataComparator
-import com.yb.livechatkt.util.NetConstant
-import com.yb.livechatkt.util.showToast
+import com.yb.livechatkt.util.*
 import com.yb.livechatkt.vm.LivePlayViewModel
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.reflect.typeOf
 
 class LivePlayActivity : BaseAppActivity() {
 
@@ -40,10 +35,14 @@ class LivePlayActivity : BaseAppActivity() {
     private var optionBuilder:GSYVideoOptionBuilder? = null
     private val ACTIVITY_RESULT = 1000020
     private var isPlay:Boolean = false
-    private var chatRoomMessages:MutableList<ChatRoomCustomMsg> = ArrayList()
+    private var chatRoomMessages:MutableList<ChatRoomTextMessage> = ArrayList()
     private var chatMessageAdapter:ChatRoomMessageRecyclerAdapter? = null
     private var chatRoomPersons:MutableList<ChatRoomPerson> = ArrayList()
     private var chatRoomPersonAdapter:ChatRoomPersonRecyclerAdapter? = null
+
+    private val giftData:MutableMap<Int,GiftData> = hashMapOf()
+
+    private var isFirst:Boolean = true
 
     override fun initView() {
         binding = DataBindingUtil.setContentView(this, getLayout())
@@ -74,6 +73,7 @@ class LivePlayActivity : BaseAppActivity() {
         binding.watchPerson.layoutManager = linearLayoutManager
         chatRoomPersonAdapter = ChatRoomPersonRecyclerAdapter(this,chatRoomPersons)
         binding.watchPerson.adapter = chatRoomPersonAdapter
+        viewModel.getGiftAllType()
     }
 
     override fun initListener() {
@@ -104,13 +104,9 @@ class LivePlayActivity : BaseAppActivity() {
         }
 
         viewModel.chatRoomMessagesLiveData.observe(this, Observer {
-            if (chatRoomMessages.size>1){
-                chatRoomMessages.add(chatRoomMessages.size-1,it)
-            }else{
-                chatRoomMessages.add(it)
-            }
+            chatRoomMessages.add(it)
             Collections.sort(chatRoomMessages, ChatRoomMessageDataComparator())
-            chatMessageAdapter?.notifyDataSetChanged()
+            chatMessageAdapter?.updateShowData()
             binding.messageRecycler.smoothScrollToPosition(chatRoomMessages.size - 1)
         })
         viewModel.roomPersonLiveData.observe(this, Observer {
@@ -128,6 +124,48 @@ class LivePlayActivity : BaseAppActivity() {
         viewModel.liveExitRoomLiveData.observe(this, Observer {
             resources.getString(R.string.live_exit).showToast()
         })
+
+        viewModel.chatRoomGiftMsgLiveData.observe(this){
+            if (null == it){
+                return@observe
+            }
+            val string = String.format(resources.getString(R.string.has_person_send_gift_name),it.data.username,if (it.data.giftnum == 0) 1 else it.data.giftnum,it.data.giftname)
+            val roomTextMessage = RoomTextMessage(
+                string,
+                SaveUserData.get().username,
+                SaveUserData.get().id.toString(),
+                SaveUserData.get().accId,
+                SaveUserData.get().role,
+                SaveUserData.get().role)
+            val message = ChatRoomTextMessage(NetConstant.responseSuccessCode,"",System.currentTimeMillis(),roomTextMessage)
+            chatRoomMessages.add(message)
+            chatMessageAdapter?.updateShowData()
+        }
+
+        viewModel.giftTypeLiveData.observe(this){
+            if (null == it){
+                return@observe
+            }
+            it.forEach {gift->
+                if (!giftData.containsKey(gift.id)){
+                    giftData[gift.id] = gift
+                }
+                viewModel.getGiftDataByType(gift.id,isFirst)
+            }
+        }
+        viewModel.giftItemDataLiveData.observe(this){
+            it.forEach { item ->
+                if (giftData.containsKey(item.type)){
+                    giftData[item.type]?.gifts?.add(item)
+                }
+            }
+        }
+
+        binding.gift.setOnClickListener {
+            showGiftDataDialog(this)
+            val data = giftData.map { it.value.name }
+        }
+
     }
     private fun initGSYVideoPlayer(liveRoomBean: LiveRoomBean) {
         val imageView = ImageView(this)

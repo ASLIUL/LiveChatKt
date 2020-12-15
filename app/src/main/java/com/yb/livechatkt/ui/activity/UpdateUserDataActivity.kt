@@ -64,18 +64,9 @@ class UpdateUserDataActivity : BaseAppActivity(),View.OnClickListener {
         binding.liveTitleBar.leftImg.setOnClickListener { finish() }
         binding.addressAction.setOnClickListener {
             dataType = 4
-            var alertDialog = AlertDialogUtil.selectAddressDialog(this)
-            alertDialog.show()
-            var layoutParams = alertDialog.window?.attributes
-            layoutParams?.width = getScreenWidth()
-            layoutParams?.height = (getScreenHeight()/3)*2
-            layoutParams?.gravity = Gravity.BOTTOM
-            layoutParams?.dimAmount = 0.6f
-            layoutParams?.windowAnimations = R.style.dialog_enter_exit
-            alertDialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            alertDialog.window?.attributes = layoutParams
+            selectAddressDialog(this)
         }
-        AlertDialogUtil.addressLiveData.observe(this, Observer {
+        addressLiveData.observe(this, Observer {
             var address =
                 it[NetConstant.PROVINCE_NAME].toString() + "-" + it[NetConstant.CITY_NAME].toString() + "-" + it[NetConstant.COUNTY_NAME]
             address = address.replace("\n", "").trim()

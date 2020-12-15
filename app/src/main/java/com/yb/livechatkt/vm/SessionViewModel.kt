@@ -3,16 +3,10 @@ package com.yb.livechatkt.vm
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.netease.nimlib.sdk.NIMClient
 import com.netease.nimlib.sdk.RequestCallback
-import com.netease.nimlib.sdk.RequestCallbackWrapper
 import com.netease.nimlib.sdk.msg.MsgService
 import com.netease.nimlib.sdk.msg.model.RecentContact
-import com.yb.livechatkt.bean.Session
-import com.yb.livechatkt.db.DBManager
-import com.yb.livechatkt.util.NetConstant
-import kotlinx.coroutines.launch
 
 class SessionViewModel(application: Application) : BaseViewModel(application) {
 

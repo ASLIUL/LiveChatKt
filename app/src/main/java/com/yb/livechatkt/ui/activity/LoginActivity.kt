@@ -30,9 +30,8 @@ public class LoginActivity : BaseAppActivity() {
             SaveUserData.get().username =  it.name+""
             SaveUserData.get().id =  it.id
             SaveUserData.get().imToken =  it.imToken
-            SaveUserData.get().qrCodeUrl =  it.qrCodeUrl
             SaveUserData.get().role =  it.role
-            Log.d(TAG, "initListener: "+it.imToken+"\t"+it.accid)
+            Log.d(TAG, "initListener: ${it.token} \t"    +it.imToken+"\t"+it.accid)
             viewModel.wyLogin(it.accid,it.imToken)
         })
         viewModel.isLoginSuccess.observe(this, Observer {

@@ -155,6 +155,15 @@ class ConversationInputPanel(
             }
             if (moreActionLine.visibility == View.VISIBLE) moreActionLine.visibility = View.GONE else moreActionLine.visibility = View.VISIBLE
         }
+        plugRecyclerAdapter?.onItemClickListener = object : PlugRecyclerAdapter.OnItemClickListener{
+            override fun itemClick(view: View, plugBean: PlugBean, position: Int) {
+                when(plugBean.action){
+                    ActionType.ALUBM ->{
+
+                    }
+                }
+            }
+        }
     }
 
     private fun sendTextMessage(){

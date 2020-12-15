@@ -70,7 +70,7 @@ suspend fun savePhoto(context: Context, bitmap: Bitmap){ //关键字suspend:在�
 
         //保存图片
         context.contentResolver.openOutputStream(saveUri).use {
-            val  success = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            val  success = bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
             withContext(Dispatchers.Main){
                 if (success){
                 context.resources.getString(R.string.save_success).showToast()
@@ -124,33 +124,35 @@ fun getConnect(message: RecentContact): String {
 
 @RequiresApi(Build.VERSION_CODES.Q)
 fun uriToFileQ(context: Context, uri: Uri): File? =
-    if (uri.scheme == ContentResolver.SCHEME_FILE)
-        uri.toFile()
-    else if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
-        //把文件保存到沙盒
-        val contentResolver = context.contentResolver
-        val cursor = contentResolver.query(uri, null, null, null, null)
-        cursor?.let {
-            if (it.moveToFirst()) {
-                val ois = context.contentResolver.openInputStream(uri)
-                val displayName =
-                    it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                ois?.let {
-                    File(
-                        context.externalCacheDir!!.absolutePath,
-                        "${Random().nextInt(9999)}$displayName"
-                    ).apply {
-                        val fos = FileOutputStream(this)
-                        android.os.FileUtils.copy(ois, fos)
-                        fos.close()
-                        it.close()
+    when (uri.scheme) {
+        ContentResolver.SCHEME_FILE -> uri.toFile()
+        ContentResolver.SCHEME_CONTENT -> {
+            //把文件保存到沙盒
+            val contentResolver = context.contentResolver
+            val cursor = contentResolver.query(uri, null, null, null, null)
+            cursor?.let {
+                if (it.moveToFirst()) {
+                    val ois = context.contentResolver.openInputStream(uri)
+                    val displayName =
+                        it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                    ois?.let {
+                        File(
+                            context.externalCacheDir!!.absolutePath,
+                            "${Random().nextInt(9999)}$displayName"
+                        ).apply {
+                            val fos = FileOutputStream(this)
+                            android.os.FileUtils.copy(ois, fos)
+                            fos.close()
+                            it.close()
+                        }
                     }
-                }
-            } else null
+                } else null
+
+            }
 
         }
-
-    } else null
+        else -> null
+    }
 
 fun dp2px(context: Context, dipValue: Float): Int {
     val scale = context.resources.displayMetrics.density

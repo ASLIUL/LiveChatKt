@@ -112,4 +112,5 @@ dependencies {
     implementation "com.google.zxing:core:3.3.2"
     implementation "com.journeyapps:zxing-android-embedded:3.6.0"
     implementation 'com.youth.banner:banner:2.1.0'
+    
 }

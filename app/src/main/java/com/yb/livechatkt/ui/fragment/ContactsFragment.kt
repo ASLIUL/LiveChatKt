@@ -63,7 +63,7 @@ class ContactsFragment : BaseFragment() {
         })
         viewModel.getContacts()
         binding.serviceGroup.setOnClickListener {
-            if (contacts?.tid!! < 1 ){
+            if (null == contacts?.id || contacts?.tid!! < 1 ){
                 resources.getString(R.string.load_failed).showToast()
                 return@setOnClickListener
             }

@@ -38,8 +38,6 @@ class LiveSelectAddressView(context: Context, attributeSet: AttributeSet) : Rela
     private var cityName:String = ""
     private var countyName:String = ""
 
-    var finishListener:OnSelectFinishListener? = null
-
 
     private val TAG = "LiveSelectAddressView"
 
@@ -95,14 +93,14 @@ class LiveSelectAddressView(context: Context, attributeSet: AttributeSet) : Rela
                     if (dataList.isNotEmpty()){
                         adapter?.notifyDataSetChanged()
                     }else{
-                        finishListener?.selectFinish(provinceId,cityId,0,provinceName,cityName,"")
+                        selectFinish(provinceId,cityId,0,provinceName,cityName,"")
                     }
 
                 }
                 3 -> {
                     countyName = dataList[position]
                     countyId = addressList[provincePosition]?.cityList[cityPosition]?.cityList[position]?.id
-                    finishListener?.selectFinish(provinceId,cityId,countyId,provinceName,cityName,countyName)
+                    selectFinish(provinceId,cityId,countyId,provinceName,cityName,countyName)
                 }
             }
 
@@ -127,11 +125,10 @@ class LiveSelectAddressView(context: Context, attributeSet: AttributeSet) : Rela
         val type = object : TypeToken<List<AddressBean>>() {}.type
         addressList = Gson().fromJson(json, type)
     }
-
-    interface OnSelectFinishListener{
-        fun selectFinish(provinceId:Int,cityId:Int,countyId:Int,provinceName:String,cityName:String,countyName:String)
+    private var selectFinish:(Int,Int,Int,String,String,String) -> Unit = {_,_,_,_,_,_->}
+    fun setOnSelectFinishListener(selectFinish:(Int,Int,Int,String,String,String) -> Unit){
+        this.selectFinish = selectFinish
     }
-
 
 
 

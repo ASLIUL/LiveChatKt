@@ -71,10 +71,10 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     var isShowLoading = MutableLiveData<Boolean>()
     var isShowError = MutableLiveData<ErrorMessageBean>()
 
-    fun showLoading(){
+    private fun showLoading(){
         isShowLoading.value =  true
     }
-    fun dismissLoading(){
+    private fun dismissLoading(){
         isShowLoading.value = false;
     }
     fun showError(error: ErrorMessageBean){

@@ -1,7 +1,5 @@
 package com.yb.livechatkt.net
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.yb.livechatkt.bean.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -90,6 +88,13 @@ interface UserApi {
     @GET(LiveChatUrl.judgeServiceIsOLine)
     suspend fun judgeServiceIsOnLine(@Query("accid") accid:String) : Result<Any>
 
+    //获取礼物
+    @GET(LiveChatUrl.getALlGiftTypeData)
+    suspend fun getALlGiftTypeData() : Result<List<GiftData>>
+
+    //获取礼物
+    @GET(LiveChatUrl.getALlGiftByType)
+    suspend fun getALlGiftByType(@Query("type")type:Int, @Query("pageNo") pageNo:Int, @Query("limit") limit:Int = 50) : Result<List<GiftItemData>>
 
 
 }

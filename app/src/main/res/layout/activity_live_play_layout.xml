@@ -44,6 +44,7 @@
                 android:layout_width="@dimen/limit_size_30dp"
                 android:layout_height="@dimen/limit_size_30dp"
                 app:corner_radius="@dimen/limit_size_15dp"
+                app:is_circle="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/limit_size_10dp"
                 android:src="@mipmap/group_header" />
@@ -147,12 +148,24 @@
                 android:layout_weight="1" />
 
             <ImageView
+                android:id="@+id/gift"
+                android:layout_width="@dimen/limit_size_25dp"
+                android:layout_height="@dimen/limit_size_25dp"
+                android:src="@drawable/ic_gift_icon_white"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/limit_size_20dp"
+                android:scaleType="centerCrop"
+                />
+
+
+            <ImageView
+                android:id="@+id/share"
                 android:layout_width="@dimen/limit_size_25dp"
                 android:layout_height="@dimen/limit_size_25dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_share_white"
                 android:scaleType="centerCrop"
-                android:layout_marginStart="@dimen/limit_size_40dp"
+                android:layout_marginStart="@dimen/limit_size_20dp"
                 />
 
             <ImageView
@@ -171,6 +184,40 @@
 
 
         </LinearLayout>
+
+        <com.yb.livechatkt.view.GiftGridView
+            android:id="@+id/gift_grid_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.55"
+            android:layout_marginStart="@dimen/limit_size_15dp"
+            android:layout_marginEnd="@dimen/limit_size_15dp"
+            tools:ignore="MissingConstraints">
+
+
+            <com.yb.livechatkt.view.GiftItemLayout
+                android:id="@+id/gift_item_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+
+            <com.yb.livechatkt.view.GiftItemLayout
+                android:id="@+id/gift_item_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+
+            <com.yb.livechatkt.view.GiftItemLayout
+                android:id="@+id/gift_item_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+
+        </com.yb.livechatkt.view.GiftGridView>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

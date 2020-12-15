@@ -5,6 +5,7 @@ object LiveChatUrl {
     //const val baseUrl = "http://192.168.0.103:9000"
 
     const val baseUrl = "http://www.moo9995.com:9000";
+    //const val baseUrl = "http://zb.huayym.com";
     const val imgBaseUrl = "http://192.168.0.103:8080"
 
     //头像的baseUrl
@@ -63,6 +64,13 @@ object LiveChatUrl {
 
     //j检查当前客服是否在线
     const val judgeServiceIsOLine = "/service/user/judgeServiceIsOnline"
+
+    //获取礼物类型
+    const val getALlGiftTypeData = "/gift/findGiftType"
+
+    //获取礼物根据类型
+    const val getALlGiftByType = "/gift/findGift"
+
 
 
 }

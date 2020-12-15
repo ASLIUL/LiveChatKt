@@ -23,7 +23,7 @@ class LiveViewModel(application: Application) : BaseViewModel(application) {
     fun getHomeLive(){
         var hashMap = HashMap<String,Any>()
         hashMap["channel_id"] = 1
-        hashMap["pageNo"] = pageNum.getValue().toString()
+        hashMap["pageNo"] = pageNum.value.toString()
         hashMap["pageSize"] = pageSize.value.toString()
         launch({userApi.getHomeLive(hashMap)},homeLiveLiveData)
     }

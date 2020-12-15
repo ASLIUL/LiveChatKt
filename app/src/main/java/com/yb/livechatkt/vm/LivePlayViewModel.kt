@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.netease.nimlib.sdk.NIMClient
 import com.netease.nimlib.sdk.RequestCallback
 import com.netease.nimlib.sdk.chatroom.ChatRoomMessageBuilder
@@ -15,10 +16,7 @@ import com.netease.nimlib.sdk.chatroom.model.ChatRoomMessage
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomData
 import com.netease.nimlib.sdk.chatroom.model.EnterChatRoomResultData
 import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum
-import com.yb.livechatkt.bean.ChatRoomCustomMsg
-import com.yb.livechatkt.bean.ChatRoomPerson
-import com.yb.livechatkt.bean.LiveRoomBean
-import com.yb.livechatkt.bean.MsgData
+import com.yb.livechatkt.bean.*
 import com.yb.livechatkt.net.LiveChatUrl
 import com.yb.livechatkt.util.NetConstant
 import com.yb.livechatkt.util.SaveUserData
@@ -27,17 +25,34 @@ import com.yb.livechatkt.util.showToast
 
 class LivePlayViewModel(application: Application) : BaseViewModel(application) {
 
-    var liveDataLiveData = MutableLiveData<LiveRoomBean>()
-    var chatRoomMessageLiveData = MutableLiveData<MutableList<ChatRoomCustomMsg>>()
+    val liveDataLiveData = MutableLiveData<LiveRoomBean>()
+    val chatRoomMessageLiveData = MutableLiveData<MutableList<ChatRoomTextMessage>>()
     val liveExitRoomLiveData = MutableLiveData<Boolean>()
-    var roomPersonLiveData = MutableLiveData<MutableList<ChatRoomPerson>>()
-
-    var chatRoomMessagesLiveData = MutableLiveData<ChatRoomCustomMsg>()
+    val roomPersonLiveData = MutableLiveData<MutableList<ChatRoomPerson>>()
+    val chatRoomMessagesLiveData = MutableLiveData<ChatRoomTextMessage>()
+    val chatRoomGiftMsgLiveData = MutableLiveData<ChatRoomGiftMessage>()
+    val giftTypeLiveData = MutableLiveData<List<GiftData>>()
+    val giftItemDataLiveData = MutableLiveData<List<GiftItemData>>()
+    val pageNo = MutableLiveData<Int>()
 
     init {
         chatRoomMessageLiveData.value = ArrayList()
         liveExitRoomLiveData.value = false
     }
+
+
+    fun getGiftAllType(){
+        launch({userApi.getALlGiftTypeData()},giftTypeLiveData)
+    }
+    fun getGiftDataByType(type:Int,isFirst:Boolean){
+        if (isFirst){
+            pageNo.value = 0
+        }else{
+            pageNo.value = pageNo.value?.plus(1)
+        }
+        launch({userApi.getALlGiftByType(type= type,pageNo = pageNo.value!!)},giftItemDataLiveData)
+    }
+
 
     fun searchLiveByLiveId(isShare: Boolean, liveId: Int, shareUserId: Int = 0){
 
@@ -79,15 +94,19 @@ class LivePlayViewModel(application: Application) : BaseViewModel(application) {
             .observeReceiveMessage({
                 if (it.isNotEmpty()) {
                     it.forEach { chatMsg ->
-                        val chatMessage: ChatRoomCustomMsg = Gson().fromJson(
-                            chatMsg.content,
-                            ChatRoomCustomMsg::class.java
-                        )
-                        if (chatMessage.code == NetConstant.responseSuccessCode) {
-                            //chatRoomMessageLiveData.value?.add(chatMessage)
-                            chatRoomMessagesLiveData.value = chatMessage
-                        } else if (chatMessage.code == NetConstant.EXIT_LIVE) {
-                            liveExitRoomLiveData.value = true
+                        val msg = JsonObject().getAsJsonObject(chatMsg.content)
+                        when(msg.get("code").asInt){
+                            NetConstant.responseSuccessCode -> {
+                                val chatMessage = Gson().fromJson<ChatRoomTextMessage>(chatMsg.content,ChatRoomTextMessage::class.java)
+                                chatRoomMessagesLiveData.value = chatMessage
+                            }
+                            NetConstant.EXIT_LIVE -> {
+                                liveExitRoomLiveData.value = true
+                            }
+                            NetConstant.SEND_GIFT_LIVE_MSG ->{
+                                val chatMessage = Gson().fromJson(chatMsg.content,ChatRoomGiftMessage::class.java)
+                                chatRoomGiftMsgLiveData.value = chatMessage
+                            }
                         }
                     }
                 }
@@ -98,7 +117,7 @@ class LivePlayViewModel(application: Application) : BaseViewModel(application) {
         if (connect.isEmpty()){
            NetConstant.NOT_INPUT_SOMETHING.showToast()
         }
-        val msgData = MsgData(
+        val msgData = RoomTextMessage(
             connect,
             SaveUserData.get().username,
             SaveUserData.get().id.toString(),
@@ -106,7 +125,7 @@ class LivePlayViewModel(application: Application) : BaseViewModel(application) {
             SaveUserData.get().role,
             SaveUserData.get().role
         )
-        var chatRoomCustomMsg = ChatRoomCustomMsg(
+        var chatRoomCustomMsg = ChatRoomTextMessage(
             NetConstant.responseSuccessCode,
             NetConstant.reponseDefaultMsg,
             System.currentTimeMillis(),
@@ -182,9 +201,9 @@ class LivePlayViewModel(application: Application) : BaseViewModel(application) {
                                     return@forEach
                                 }
                                 Log.d(TAG, "onSuccess2: ${it.content}")
-                                val message = Gson().fromJson<ChatRoomCustomMsg>(
+                                val message = Gson().fromJson<ChatRoomTextMessage>(
                                     it.content,
-                                    ChatRoomCustomMsg::class.java
+                                    ChatRoomTextMessage::class.java
                                 )
                                 if (message.code == NetConstant.responseSuccessCode) {
                                     message.time = it.time

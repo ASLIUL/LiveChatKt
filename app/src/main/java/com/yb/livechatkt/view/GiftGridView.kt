@@ -5,11 +5,13 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.GridView
 import android.widget.LinearLayout
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.yb.livechatkt.R
 import com.yb.livechatkt.bean.RoomGiftMessage
+import com.yb.livechatkt.databinding.LiveTestGiftShowLayoutBinding
 import com.yb.livechatkt.ui.adapter.GiftShowListViewAdapter
 
 
@@ -22,24 +24,22 @@ class GiftGridView(context: Context,attributeSet: AttributeSet) : LinearLayout(c
     private val TAG = "GiftGridView"
 
     private var giftBeans: List<RoomGiftMessage>? = null
-    private var view: View? = null
-    private var gridView: GridView? = null
     private var adapter: GiftShowListViewAdapter? = null
     private var isFirst = true
+    private val binding:LiveTestGiftShowLayoutBinding = DataBindingUtil.inflate(LayoutInflater.from(context),R.layout.live_test_gift_show_layout,null,false)
 
     init {
-        initView()
-    }
+        addView(binding.root)
+        binding.gridView.layoutManager = LinearLayoutManager(context).also { it.orientation = RecyclerView.VERTICAL }
 
-
-    private fun initView() {
-        view = LayoutInflater.from(context).inflate(R.layout.live_test_gift_show_layout, null, false)
-        gridView = view!!.findViewById(R.id.grid_view)
-        addView(view)
     }
 
     fun setGiftBeans(giftBeans: List<RoomGiftMessage>) {
         this.giftBeans = giftBeans
+        showData()
+    }
+    fun setGiftBeans(giftBeans: RoomGiftMessage) {
+        this.giftBeans = arrayListOf(giftBeans)
         showData()
     }
 
@@ -50,7 +50,7 @@ class GiftGridView(context: Context,attributeSet: AttributeSet) : LinearLayout(c
         }
         if (isFirst) {
             adapter = GiftShowListViewAdapter(context, giftBeans!!)
-            gridView?.adapter = adapter
+            binding.gridView.adapter = adapter
             isFirst = false
         } else {
             adapter?.notifyDataSetChanged()

@@ -4,7 +4,7 @@ object LiveChatUrl {
 
     //const val baseUrl = "http://192.168.0.103:9000"
 
-    const val baseUrl = "http://www.moo9995.com:9000";
+    const val baseUrl = "http://www.yingbeikj.com:9000";
     //const val baseUrl = "http://zb.huayym.com";
     const val imgBaseUrl = "http://192.168.0.103:8080"
 
@@ -47,7 +47,6 @@ object LiveChatUrl {
     //修改我的信息
     const val updateMyData = "/live/api/user/modifyUserInfor"
 
-    //修改我的花漾账号
     const val updateMyHyNum = "/live/api/user/modifyUniId"
 
     //更改我的头像
@@ -70,6 +69,12 @@ object LiveChatUrl {
 
     //获取礼物根据类型
     const val getALlGiftByType = "/gift/findGift"
+
+    //查询钱包
+    const val getMyWalletBalance = "/gift/findWallet"
+
+    //送礼物
+    const val sendGiftInLive = "/gift/sendGift"
 
 
 

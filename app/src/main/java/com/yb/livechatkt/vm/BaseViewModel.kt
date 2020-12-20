@@ -16,6 +16,7 @@ import com.netease.nimlib.sdk.msg.model.IMMessage
 import com.netease.nimlib.sdk.msg.model.RecentContact
 import com.yb.livechatkt.bean.ErrorMessageBean
 import com.yb.livechatkt.bean.LiveEnum
+import com.yb.livechatkt.bean.Wallet
 import com.yb.livechatkt.net.Result
 import com.yb.livechatkt.net.RetrofitUtil
 import com.yb.livechatkt.net.UserApi
@@ -41,6 +42,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     val recentContactLiveData = MutableLiveData<List<RecentContact>>()
     val deleteRecentContactLiveData = MutableLiveData<RecentContact>()
     val isOffLineLiveData = MutableLiveData<Boolean>()
+    val wallet = MutableLiveData<Wallet>()
 
 
 
@@ -229,6 +231,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
 
+    }
+
+    //获取余额
+    fun getMyWallet(){
+        launch({userApi.getMyWalletBalance()},wallet)
     }
 
 }

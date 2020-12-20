@@ -42,13 +42,14 @@
             tools:ignore="MissingConstraints" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/limit_size_10dp"
             android:layout_marginBottom="@dimen/limit_size_10dp"
             android:text="@string/i_have_num_money"
-            android:textSize="@dimen/font_size_12sp"
+            android:padding="@dimen/limit_size_5dp"
+            android:textSize="@dimen/font_size_13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.04"
@@ -61,7 +62,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/select_num"
-            android:textSize="@dimen/font_size_12sp"
+            android:visibility="gone"
+            android:textSize="@dimen/font_size_13sp"
             app:layout_constraintBottom_toBottomOf="@+id/num_spinner"
             app:layout_constraintEnd_toStartOf="@+id/num_spinner"
             app:layout_constraintHorizontal_bias="0.96"
@@ -71,13 +73,18 @@
 
         <Spinner
             android:id="@+id/num_spinner"
-            android:layout_width="@dimen/limit_size_50dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:visibility="gone"
+            android:textSize="@dimen/font_size_13sp"
+            android:gravity="center"
+            android:padding="@dimen/limit_size_5dp"
             app:layout_constraintHorizontal_bias="0.95"
-            app:layout_constraintBottom_toBottomOf="@+id/textView4"
+            app:layout_constraintBottom_toBottomOf="@+id/balance"
             app:layout_constraintEnd_toStartOf="@id/send_gift"
-            app:layout_constraintStart_toEndOf="@+id/textView4"
-            app:layout_constraintTop_toTopOf="@+id/textView4"
+            app:layout_constraintStart_toEndOf="@+id/balance"
+            app:layout_constraintTop_toTopOf="@+id/balance"
             tools:ignore="MissingConstraints" />
 
         <TextView
@@ -85,12 +92,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/send"
-            android:textSize="@dimen/font_size_12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView4"
+            android:padding="@dimen/limit_size_5dp"
+            android:textSize="@dimen/font_size_13sp"
+            app:layout_constraintBottom_toBottomOf="@+id/balance"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.95"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView4"
+            app:layout_constraintTop_toTopOf="@+id/balance"
             tools:ignore="MissingConstraints" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

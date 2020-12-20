@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/title"
+    android:padding="@dimen/limit_size_10dp"
+    tools:text="@string/sure"
+    android:textSize="@dimen/font_size_12sp"
+    android:layout_marginStart="@dimen/limit_size_10dp"
+    android:layout_marginEnd="@dimen/limit_size_10dp"
+    >
+
+</androidx.appcompat.widget.AppCompatTextView>

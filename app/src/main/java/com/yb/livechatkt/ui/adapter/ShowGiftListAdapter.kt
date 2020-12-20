@@ -5,10 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.yb.livechatkt.R
+import com.yb.livechatkt.bean.GiftItemData
+import com.yb.livechatkt.bean.GiftTitleTab
 import com.yb.livechatkt.databinding.AdapterShowGiftItemLayoutBinding
 
-class ShowGiftListAdapter(private val context: Context,private val dataList:List<Any>):RecyclerView.Adapter<ShowGiftListAdapter.GiftViewHolder>() {
+class ShowGiftListAdapter(private val context: Context,private val dataList:List<GiftItemData>?):RecyclerView.Adapter<ShowGiftListAdapter.GiftViewHolder>() {
 
     class GiftViewHolder(val binding: AdapterShowGiftItemLayoutBinding):RecyclerView.ViewHolder(binding.root){
 
@@ -22,10 +25,34 @@ class ShowGiftListAdapter(private val context: Context,private val dataList:List
 
     override fun onBindViewHolder(holder: GiftViewHolder, position: Int) {
         val binding = holder.binding
+        if (dataList.isNullOrEmpty()) return
+        Glide.with(context).asGif().load(dataList[position].icon).into(binding.giftImg)
+        binding.giftName.text = dataList[position].name
+        binding.giftPrice.text = "¥${dataList[position].price}"
+
+        if (dataList[position].check == 1){
+            binding.giftImg.setBorderWidth(1)
+            binding.giftImg.setBorderColor(context.resources.getColor(R.color.theme_bg_color))
+        }else{
+            binding.giftImg.setBorderWidth(0)
+        }
+
+
+
+        binding.root.setOnClickListener {
+            onItemClick(dataList[position])
+        }
 
     }
 
-    override fun getItemCount(): Int = dataList.size
+    override fun getItemCount(): Int = if (dataList.isNullOrEmpty()) 0 else dataList?.size
+
+
+    private var onItemClick:(GiftItemData) ->Unit = {}
+
+    fun setOnItemClickListener(onItemClick:(GiftItemData) ->Unit){
+        this.onItemClick = onItemClick
+    }
 
 
 }

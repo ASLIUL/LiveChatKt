@@ -9,7 +9,8 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/theme_bg_color">
+        android:padding="@dimen/limit_size_5dp"
+        android:background="@drawable/gift_anim_bg">
 
         <com.yb.livechatkt.view.NiceImageView
             android:id="@+id/crvheadimage"

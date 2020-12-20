@@ -185,15 +185,16 @@
 
         </LinearLayout>
 
-        <com.yb.livechatkt.view.GiftGridView
-            android:id="@+id/gift_grid_view"
+        <com.yb.livechatkt.view.GiftRootLayout
+            android:id="@+id/gift_root_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.55"
+            app:layout_constraintVertical_bias="0.5"
             android:layout_marginStart="@dimen/limit_size_15dp"
             android:layout_marginEnd="@dimen/limit_size_15dp"
             tools:ignore="MissingConstraints">
@@ -203,21 +204,31 @@
                 android:id="@+id/gift_item_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/limit_size_10dp"
+                app:gift_index="0"
+                android:visibility="gone"
                 />
 
             <com.yb.livechatkt.view.GiftItemLayout
                 android:id="@+id/gift_item_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/limit_size_10dp"
+                android:layout_marginTop="@dimen/limit_size_10dp"
+                app:gift_index="1"
+                android:visibility="gone"
                 />
 
             <com.yb.livechatkt.view.GiftItemLayout
                 android:id="@+id/gift_item_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/limit_size_10dp"
+                app:gift_index="2"
+                android:visibility="gone"
                 />
 
-        </com.yb.livechatkt.view.GiftGridView>
+        </com.yb.livechatkt.view.GiftRootLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,10 +13,11 @@
         android:padding="@dimen/limit_size_5dp"
         >
         
-        <androidx.constraintlayout.utils.widget.ImageFilterView
+        <com.yb.livechatkt.view.NiceImageView
             android:id="@+id/gift_img"
             android:layout_width="@dimen/limit_size_50dp"
             android:layout_height="@dimen/limit_size_60dp"
+
             tools:ignore="MissingConstraints" />
 
         <TextView

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.netease.nimlib.sdk.NIMClient
 import com.netease.nimlib.sdk.RequestCallback
 import com.netease.nimlib.sdk.chatroom.ChatRoomMessageBuilder
@@ -32,8 +33,10 @@ class LivePlayViewModel(application: Application) : BaseViewModel(application) {
     val chatRoomMessagesLiveData = MutableLiveData<ChatRoomTextMessage>()
     val chatRoomGiftMsgLiveData = MutableLiveData<ChatRoomGiftMessage>()
     val giftTypeLiveData = MutableLiveData<List<GiftData>>()
-    val giftItemDataLiveData = MutableLiveData<List<GiftItemData>>()
+    val giftItemDataLiveData = MutableLiveData<GiftRecords>()
     val pageNo = MutableLiveData<Int>()
+
+    val sendGiftLiveData = MutableLiveData<Boolean>()
 
     init {
         chatRoomMessageLiveData.value = ArrayList()
@@ -189,27 +192,33 @@ class LivePlayViewModel(application: Application) : BaseViewModel(application) {
 
     //获取历史消息
     fun getChatRoomHistoryMessage(){
-
         NIMClient.getService(ChatRoomService::class.java)
-            .pullMessageHistoryEx(liveDataLiveData.value?.room_id.toString(), System.currentTimeMillis(), 50, QueryDirectionEnum.QUERY_OLD).setCallback(
+            .pullMessageHistoryEx(liveDataLiveData.value?.room_id.toString(), System.currentTimeMillis(), 15, QueryDirectionEnum.QUERY_OLD).setCallback(
                 object : RequestCallback<MutableList<ChatRoomMessage>> {
                     override fun onSuccess(param: MutableList<ChatRoomMessage>?) {
                         if (!param.isNullOrEmpty()) {
                             param.forEach {
-                                Log.d(TAG, "onSuccess1: ${it.content}")
+
                                 if (!it.content.startsWith("{") && !it.content.endsWith("}")) {
                                     return@forEach
                                 }
-                                Log.d(TAG, "onSuccess2: ${it.content}")
-                                val message = Gson().fromJson<ChatRoomTextMessage>(
-                                    it.content,
-                                    ChatRoomTextMessage::class.java
-                                )
-                                if (message.code == NetConstant.responseSuccessCode) {
-                                    message.time = it.time
-                                    chatRoomMessagesLiveData.value = message
-                                } else if (message.code == NetConstant.EXIT_LIVE) {
-                                    liveExitRoomLiveData.value = true
+                                Log.d(TAG, "onSuccess: ${it.content}")
+                                val msg = JsonParser().parse(it.content).asJsonObject
+                                when (msg.get("code").asInt) {
+                                    NetConstant.responseSuccessCode -> {
+                                        val chatMessage = Gson().fromJson<ChatRoomTextMessage>(
+                                            it.content,
+                                            ChatRoomTextMessage::class.java
+                                        )
+                                        chatRoomMessagesLiveData.value = chatMessage
+                                    }
+                                    NetConstant.SEND_GIFT_LIVE_MSG -> {
+                                        val chatMessage = Gson().fromJson(
+                                            it.content,
+                                            ChatRoomGiftMessage::class.java
+                                        )
+                                        chatRoomGiftMsgLiveData.value = chatMessage
+                                    }
                                 }
                             }
                         }
@@ -223,6 +232,53 @@ class LivePlayViewModel(application: Application) : BaseViewModel(application) {
 
                     }
                 })
+    }
+
+    //发送礼物消息
+    fun sendGiftRequest(num:Int,giftItemData: GiftItemData){
+        val hashMap = HashMap<String,Any>()
+        hashMap["giftId"] = giftItemData.id
+        hashMap["num"] = num
+        hashMap["targetId"] = liveDataLiveData.value?.user_id!!
+        launchAny({userApi.sendGiftInLive(hashMap)},sendGiftLiveData)
+    }
+    fun sendGiftMessage(num:Int, giftItemData: GiftItemData?){
+        if (null == giftItemData) return
+
+        val roomGiftMessage = RoomGiftMessage(
+            giftid = giftItemData.id,
+            giftimg = giftItemData.gif,
+            giftname = giftItemData.name,
+            giftnum = num,
+            SaveUserData.get().username,
+            SaveUserData.get().id.toString(),
+            SaveUserData.get().accId,
+            SaveUserData.get().role,
+            SaveUserData.get().role
+            )
+        val giftMsg =  ChatRoomGiftMessage(NetConstant.SEND_GIFT_LIVE_MSG,NetConstant.reponseDefaultMsg,System.currentTimeMillis(),roomGiftMessage)
+        val chatRoomMsg = ChatRoomMessageBuilder.createChatRoomTextMessage(
+            liveDataLiveData.value?.room_id.toString(), Gson().toJson(
+                giftMsg
+            )
+        )
+
+
+        NIMClient.getService(ChatRoomService::class.java).sendMessage(chatRoomMsg, true).setCallback(
+            object : RequestCallback<Void> {
+                override fun onSuccess(param: Void?) {
+                    chatRoomGiftMsgLiveData.value = giftMsg
+                }
+
+                override fun onFailed(code: Int) {
+                    Log.d(TAG, "发送礼物的消息 onFailed: $code")
+                }
+
+                override fun onException(exception: Throwable?) {
+                    exception?.printStackTrace()
+                }
+            })
+
     }
 
 

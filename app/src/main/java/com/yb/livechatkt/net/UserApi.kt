@@ -94,7 +94,16 @@ interface UserApi {
 
     //获取礼物
     @GET(LiveChatUrl.getALlGiftByType)
-    suspend fun getALlGiftByType(@Query("type")type:Int, @Query("pageNo") pageNo:Int, @Query("limit") limit:Int = 50) : Result<List<GiftItemData>>
+    suspend fun getALlGiftByType(@Query("type")type:Int, @Query("pageNo") pageNo:Int, @Query("limit") limit:Int = 50) : Result<GiftRecords>
+
+    //查询余额
+    @GET(LiveChatUrl.getMyWalletBalance)
+    suspend fun getMyWalletBalance() : Result<Wallet>
+
+    //送礼物
+    @POST(LiveChatUrl.sendGiftInLive)
+    suspend fun sendGiftInLive(@Body hashMap: HashMap<String, Any>) :Result<Any>
+
 
 
 }

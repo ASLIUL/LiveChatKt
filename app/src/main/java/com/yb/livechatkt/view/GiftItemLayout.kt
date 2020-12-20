@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.yb.livechatkt.R
+import com.yb.livechatkt.bean.GiftAnimData
 import com.yb.livechatkt.bean.RoomGiftMessage
 import com.yb.livechatkt.databinding.ViewItemGiftBinding
 import com.yb.livechatkt.net.LiveChatUrl
@@ -46,8 +47,8 @@ class GiftItemLayout(context: Context,attributeSet: AttributeSet) : LinearLayout
     /**
      * 当前tag
      */
-    private var myTag: String? = null
-    private var giftMessage:RoomGiftMessage? = null
+    var myTag: String? = null
+    private var giftMessage:GiftAnimData? = null
     /**
      * 透明度动画(200ms), 连击动画(200ms)
      */
@@ -70,17 +71,18 @@ class GiftItemLayout(context: Context,attributeSet: AttributeSet) : LinearLayout
 
     /**
      * 设置礼物item显示的数据
-     * @param giftBean
+     * @param giftMessage
      */
-    fun setData(giftMessage: RoomGiftMessage) {
+    fun setData(giftAnimData: GiftAnimData?) {
+        if (null == giftAnimData) return
         visibility = VISIBLE
-        this.giftMessage = giftMessage
-        myTag = giftMessage.username + giftMessage.giftname
-        Glide.with(context).load(LiveChatUrl.imgBaseUrl+giftMessage.chatAccount).into(binding.crvheadimage)
-        binding.tvUserName.text = giftMessage.username
-        binding.tvMessage.text = giftMessage.giftname
-        binding.giftNum.text = "x${giftMessage.giftnum}"
-        Glide.with(context).asGif().load(giftMessage.giftimg).into(binding.ivgift)
+        this.giftMessage = giftAnimData
+        myTag = giftAnimData.username + giftAnimData.id
+        Glide.with(context).load(giftAnimData.header).into(binding.crvheadimage)
+        binding.tvUserName.text = giftAnimData.username
+        binding.tvMessage.text = giftAnimData.giftName
+        binding.giftNum.text = "x${giftAnimData.num}"
+        Glide.with(context).asGif().load(giftAnimData.giftImg).into(binding.ivgift)
     }
 
     /**
@@ -89,8 +91,8 @@ class GiftItemLayout(context: Context,attributeSet: AttributeSet) : LinearLayout
      */
     fun addCount(sortNum: Int) {
         handler.removeMessages(0)
-        giftMessage?.giftnum = giftMessage?.giftnum?.plus(sortNum)
-        binding.giftNum.text = "x${giftMessage?.giftnum}"
+        giftMessage?.num = giftMessage?.num?.plus(sortNum)!!
+        binding.giftNum.text = "x${giftMessage?.num}"
         binding.giftNum.startAnimation(numAnim) // 执行礼物数量动画
     }
 
@@ -101,7 +103,7 @@ class GiftItemLayout(context: Context,attributeSet: AttributeSet) : LinearLayout
 
     override fun onAnimationStart(animation: Animation) {}
     override fun onAnimationEnd(animation: Animation) {
-        if (animation === translateAnim) { // 头像渐变动画执行完毕
+        if (animation == translateAnim) { // 头像渐变动画执行完毕
             binding.crvheadimage.clearAnimation()
             binding.giftNum.startAnimation(numAnim) // 执行礼物数量动画
         } else {

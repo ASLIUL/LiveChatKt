@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.widget.ImageView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -17,13 +18,14 @@ import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.yb.livechatkt.R
 import com.yb.livechatkt.bean.*
 import com.yb.livechatkt.databinding.ActivityLivePlayLayoutBinding
+import com.yb.livechatkt.net.LiveChatUrl
 import com.yb.livechatkt.ui.adapter.ChatRoomMessageRecyclerAdapter
 import com.yb.livechatkt.ui.adapter.ChatRoomPersonRecyclerAdapter
 import com.yb.livechatkt.util.*
+import com.yb.livechatkt.view.GiftItemLayout
 import com.yb.livechatkt.vm.LivePlayViewModel
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.reflect.typeOf
 
 class LivePlayActivity : BaseAppActivity() {
 
@@ -39,10 +41,12 @@ class LivePlayActivity : BaseAppActivity() {
     private var chatMessageAdapter:ChatRoomMessageRecyclerAdapter? = null
     private var chatRoomPersons:MutableList<ChatRoomPerson> = ArrayList()
     private var chatRoomPersonAdapter:ChatRoomPersonRecyclerAdapter? = null
-
-    private val giftData:MutableMap<Int,GiftData> = hashMapOf()
-
+    private var balance:Double = 0.0
+    private val giftData:MutableMap<Int, GiftData> = hashMapOf()
     private var isFirst:Boolean = true
+    private var sendGiftNum = 1
+    private var sendGiftData:GiftItemData? = null
+
 
     override fun initView() {
         binding = DataBindingUtil.setContentView(this, getLayout())
@@ -63,7 +67,7 @@ class LivePlayActivity : BaseAppActivity() {
             ?.setAutoFullWithSize(true)
             ?.setShowFullAnimation(true)
             ?.setLooping(false)
-        chatMessageAdapter = ChatRoomMessageRecyclerAdapter(this,chatRoomMessages)
+        chatMessageAdapter = ChatRoomMessageRecyclerAdapter(this, chatRoomMessages)
         val manager = LinearLayoutManager(this)
         manager.orientation = RecyclerView.VERTICAL
         binding.messageRecycler.layoutManager = manager
@@ -71,9 +75,17 @@ class LivePlayActivity : BaseAppActivity() {
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = RecyclerView.HORIZONTAL
         binding.watchPerson.layoutManager = linearLayoutManager
-        chatRoomPersonAdapter = ChatRoomPersonRecyclerAdapter(this,chatRoomPersons)
+        chatRoomPersonAdapter = ChatRoomPersonRecyclerAdapter(this, chatRoomPersons)
         binding.watchPerson.adapter = chatRoomPersonAdapter
         viewModel.getGiftAllType()
+        viewModel.getMyWallet()
+
+        val itemLayouts: MutableList<GiftItemLayout> = arrayListOf()
+        itemLayouts.add(binding.giftItem1)
+        itemLayouts.add(binding.giftItem2)
+        itemLayouts.add(binding.giftItem3)
+        binding.giftRootLayout.setItemLayout(itemLayouts)
+
     }
 
     override fun initListener() {
@@ -90,9 +102,21 @@ class LivePlayActivity : BaseAppActivity() {
             initGSYVideoPlayer(it)
             viewModel.joinLiveRoom()
         })
+        viewModel.wallet.observe(this){
+            balance = it.balance
+        }
+
         binding.msgConnect.setOnClickListener {
             val intent = Intent(this, LivePlayerBottomInputActivity::class.java)
-            startActivityForResult(intent, ACTIVITY_RESULT)
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+                if (it.resultCode == Activity.RESULT_OK){
+                    viewModel.sendTextMessage(
+                        it.data?.getStringExtra(NetConstant.CHAT_ROOM_INPUT_CONNECT).toString()
+                    )
+                }
+            }
+
+            //startActivityForResult(intent, ACTIVITY_RESULT)
         }
         binding.close.setOnClickListener {
             viewModel.exitLiveRoom()
@@ -103,6 +127,7 @@ class LivePlayActivity : BaseAppActivity() {
             finish()
         }
 
+
         viewModel.chatRoomMessagesLiveData.observe(this, Observer {
             chatRoomMessages.add(it)
             Collections.sort(chatRoomMessages, ChatRoomMessageDataComparator())
@@ -112,14 +137,16 @@ class LivePlayActivity : BaseAppActivity() {
         viewModel.roomPersonLiveData.observe(this, Observer {
             chatRoomPersons.clear()
             chatRoomPersons.addAll(it)
-            Log.d(TAG, "initListener: ${it.size}")
+            Log.d(TAG, "initListener0: ${it.size}")
             chatRoomPersonAdapter?.notifyDataSetChanged()
         })
         viewModel.isShowError.observe(this, Observer {
             it.msg.showToast()
         })
-        viewModel.isOffLineLiveData.observe(this,{
-            if (it) {offLine();finish()}
+        viewModel.isOffLineLiveData.observe(this, {
+            if (it) {
+                offLine();finish()
+            }
         })
         viewModel.liveExitRoomLiveData.observe(this, Observer {
             resources.getString(R.string.live_exit).showToast()
@@ -129,41 +156,76 @@ class LivePlayActivity : BaseAppActivity() {
             if (null == it){
                 return@observe
             }
-            val string = String.format(resources.getString(R.string.has_person_send_gift_name),it.data.username,if (it.data.giftnum == 0) 1 else it.data.giftnum,it.data.giftname)
+            val string = String.format(
+                resources.getString(R.string.has_person_send_gift_name),
+                it.data.username,
+                if (it.data.giftnum == 0) 1 else it.data.giftnum,
+                it.data.giftname
+            )
             val roomTextMessage = RoomTextMessage(
                 string,
                 SaveUserData.get().username,
                 SaveUserData.get().id.toString(),
                 SaveUserData.get().accId,
                 SaveUserData.get().role,
-                SaveUserData.get().role)
-            val message = ChatRoomTextMessage(NetConstant.responseSuccessCode,"",System.currentTimeMillis(),roomTextMessage)
+                SaveUserData.get().role
+            )
+            val message = ChatRoomTextMessage(
+                NetConstant.responseSuccessCode,
+                "",
+                System.currentTimeMillis(),
+                roomTextMessage
+            )
             chatRoomMessages.add(message)
             chatMessageAdapter?.updateShowData()
+            binding.messageRecycler.smoothScrollToPosition(chatRoomMessages.size - 1)
+            binding.giftRootLayout.loadGift(GiftAnimData(it.data.giftid,it.data.giftnum,it.data.username,it.data.giftname,it.data.giftimg,LiveChatUrl.headerBaseUrl+it.data.chatAccount))
         }
 
         viewModel.giftTypeLiveData.observe(this){
+            giftData.clear()
             if (null == it){
                 return@observe
             }
-            it.forEach {gift->
+            it.forEach { gift->
                 if (!giftData.containsKey(gift.id)){
                     giftData[gift.id] = gift
                 }
-                viewModel.getGiftDataByType(gift.id,isFirst)
+                Log.d(TAG, "initListener3: ${gift.id}")
+                viewModel.getGiftDataByType(gift.id, isFirst)
             }
         }
         viewModel.giftItemDataLiveData.observe(this){
-            it.forEach { item ->
-                if (giftData.containsKey(item.type)){
-                    giftData[item.type]?.gifts?.add(item)
-                }
+            if (giftData.containsKey(it.records[0].type)){
+                giftData[it.records[0].type]?.gifts = it.records
             }
+            Log.d(TAG, "initListener6: ${giftData.keys}")
+            Log.d(TAG, "initListener7: ${giftData.values}")
         }
 
         binding.gift.setOnClickListener {
-            showGiftDataDialog(this)
-            val data = giftData.map { it.value.name }
+            val titleTabs:MutableList<GiftTitleTab> = arrayListOf()
+            giftData.forEach {
+                titleTabs.add(GiftTitleTab(it.value.id, it.value.name, 0))
+            }
+            if(titleTabs.isNotEmpty()){titleTabs[0].check = 1}
+
+            giftData.forEach {
+                Log.d(TAG, "initListener4: ${it.value}")
+            }
+
+            showGiftDataDialog(this, balance, titleTabs, giftData){ num, gift ->
+                if (null == gift) return@showGiftDataDialog
+                sendGiftNum = num
+                sendGiftData = gift
+                viewModel.sendGiftRequest(num, gift)
+                viewModel.getMyWallet()
+            }
+        }
+        viewModel.sendGiftLiveData.observe(this){
+            if (it){
+                viewModel.sendGiftMessage(sendGiftNum, sendGiftData)
+            }
         }
 
     }
